@@ -2359,6 +2359,140 @@ void *pvTaskIncrementMutexHeldCount( void ) PRIVILEGED_FUNCTION;
 void vTaskInternalSetTimeOutState( TimeOut_t * const pxTimeOut ) PRIVILEGED_FUNCTION;
 
 
+// esp32
+
+#include <limits.h>
+
+/**
+ * Create a new task with a specified affinity.
+ *
+ * This function is similar to xTaskCreate, but allows setting task affinity
+ * in SMP system.
+ *
+ * @param pvTaskCode Pointer to the task entry function.  Tasks
+ * must be implemented to never return (i.e. continuous loop).
+ *
+ * @param pcName A descriptive name for the task.  This is mainly used to
+ * facilitate debugging.  Max length defined by configMAX_TASK_NAME_LEN - default
+ * is 16.
+ *
+ * @param usStackDepth The size of the task stack specified as the number of
+ * bytes. Note that this differs from vanilla FreeRTOS.
+ *
+ * @param pvParameters Pointer that will be used as the parameter for the task
+ * being created.
+ *
+ * @param uxPriority The priority at which the task should run.  Systems that
+ * include MPU support can optionally create tasks in a privileged (system)
+ * mode by setting bit portPRIVILEGE_BIT of the priority parameter.  For
+ * example, to create a privileged task at priority 2 the uxPriority parameter
+ * should be set to ( 2 | portPRIVILEGE_BIT ).
+ *
+ * @param pvCreatedTask Used to pass back a handle by which the created task
+ * can be referenced.
+ *
+ * @param xCoreID If the value is tskNO_AFFINITY, the created task is not
+ * pinned to any CPU, and the scheduler can run it on any core available.
+ * Other values indicate the index number of the CPU which the task should
+ * be pinned to. Specifying values larger than (portNUM_PROCESSORS - 1) will
+ * cause the function to fail.
+ *
+ * @return pdPASS if the task was successfully created and added to a ready
+ * list, otherwise an error code defined in the file projdefs.h
+ *
+ * \ingroup Tasks
+ */
+#if( configSUPPORT_DYNAMIC_ALLOCATION == 1 )
+	BaseType_t xTaskCreatePinnedToCore(	TaskFunction_t pvTaskCode,
+										const char * const pcName,
+										const uint32_t usStackDepth,
+										void * const pvParameters,
+										UBaseType_t uxPriority,
+										TaskHandle_t * const pvCreatedTask,
+										const BaseType_t xCoreID);
+
+#endif
+
+	TaskHandle_t xTaskGetIdleTaskHandleForCPU( UBaseType_t cpuid );
+		TaskHandle_t xTaskGetCurrentTaskHandleForCPU( BaseType_t cpuid );
+
+	BaseType_t xTaskGetAffinity( TaskHandle_t xTask );
+
+	#define tskNO_AFFINITY INT_MAX
+
+
+	#if ( configTHREAD_LOCAL_STORAGE_DELETE_CALLBACKS )
+
+		/**
+		 * Prototype of local storage pointer deletion callback.
+		 */
+		typedef void (*TlsDeleteCallbackFunction_t)( int, void * );
+
+		/**
+		 * Set local storage pointer and deletion callback.
+		 *
+		 * Each task contains an array of pointers that is dimensioned by the
+		 * configNUM_THREAD_LOCAL_STORAGE_POINTERS setting in FreeRTOSConfig.h.
+		 * The kernel does not use the pointers itself, so the application writer
+		 * can use the pointers for any purpose they wish.
+		 *
+		 * Local storage pointers set for a task can reference dynamically
+		 * allocated resources. This function is similar to
+		 * vTaskSetThreadLocalStoragePointer, but provides a way to release
+		 * these resources when the task gets deleted. For each pointer,
+		 * a callback function can be set. This function will be called
+		 * when task is deleted, with the local storage pointer index
+		 * and value as arguments.
+		 *
+		 * @param xTaskToSet  Task to set thread local storage pointer for
+		 * @param xIndex The index of the pointer to set, from 0 to
+		 *               configNUM_THREAD_LOCAL_STORAGE_POINTERS - 1.
+		 * @param pvValue  Pointer value to set.
+		 * @param pvDelCallback  Function to call to dispose of the local
+		 *                       storage pointer when the task is deleted.
+		 */
+		void vTaskSetThreadLocalStoragePointerAndDelCallback( TaskHandle_t xTaskToSet, BaseType_t xIndex, void *pvValue, TlsDeleteCallbackFunction_t pvDelCallback);
+#endif
+
+/**
+ * Get the handle of idle task for the given CPU.
+ *
+ * xTaskGetIdleTaskHandleForCPU() is only available if
+ * INCLUDE_xTaskGetIdleTaskHandle is set to 1 in FreeRTOSConfig.h.
+ *
+ * @param cpuid The CPU to get the handle for
+ *
+ * @return Idle task handle of a given cpu. It is not valid to call
+ * xTaskGetIdleTaskHandleForCPU() before the scheduler has been started.
+ */
+TaskHandle_t xTaskGetIdleTaskHandleForCPU( UBaseType_t cpuid );
+
+
+		/**
+		 * Set local storage pointer and deletion callback.
+		 *
+		 * Each task contains an array of pointers that is dimensioned by the
+		 * configNUM_THREAD_LOCAL_STORAGE_POINTERS setting in FreeRTOSConfig.h.
+		 * The kernel does not use the pointers itself, so the application writer
+		 * can use the pointers for any purpose they wish.
+		 *
+		 * Local storage pointers set for a task can reference dynamically
+		 * allocated resources. This function is similar to
+		 * vTaskSetThreadLocalStoragePointer, but provides a way to release
+		 * these resources when the task gets deleted. For each pointer,
+		 * a callback function can be set. This function will be called
+		 * when task is deleted, with the local storage pointer index
+		 * and value as arguments.
+		 *
+		 * @param xTaskToSet  Task to set thread local storage pointer for
+		 * @param xIndex The index of the pointer to set, from 0 to
+		 *               configNUM_THREAD_LOCAL_STORAGE_POINTERS - 1.
+		 * @param pvValue  Pointer value to set.
+		 * @param pvDelCallback  Function to call to dispose of the local
+		 *                       storage pointer when the task is deleted.
+		 */
+		void vTaskSetThreadLocalStoragePointerAndDelCallback( TaskHandle_t xTaskToSet, BaseType_t xIndex, void *pvValue, TlsDeleteCallbackFunction_t pvDelCallback);
+
 #ifdef __cplusplus
 }
 #endif

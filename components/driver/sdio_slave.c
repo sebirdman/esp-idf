@@ -87,6 +87,8 @@ The driver of FIFOs works as below:
 #include <string.h>
 #include "driver/sdio_slave.h"
 #include "soc/sdio_slave_periph.h"
+#include "soc/gpio_periph.h"
+#include "driver/gpio.h"
 #include "rom/lldesc.h"
 #include "esp_log.h"
 #include "esp_intr_alloc.h"

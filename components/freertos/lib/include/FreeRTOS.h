@@ -1165,6 +1165,30 @@ typedef struct xSTATIC_STREAM_BUFFER
 /* Message buffers are built on stream buffers. */
 typedef StaticStreamBuffer_t StaticMessageBuffer_t;
 
+
+
+
+
+
+
+
+
+
+// esp32 stuffs
+
+#ifndef traceISR_EXIT_TO_SCHEDULER
+	#define traceISR_EXIT_TO_SCHEDULER()
+#endif
+#ifndef traceISR_EXIT
+	#define traceISR_EXIT()
+#endif
+
+#ifndef traceISR_ENTER
+	#define traceISR_ENTER(_n_)
+#endif
+
+
+
 #ifdef __cplusplus
 }
 #endif

@@ -1987,7 +1987,7 @@ BaseType_t xReturn;
 		{
 			/* Switch Newlib's _impure_ptr variable to point to the _reent
 			structure specific to the task that will run first. */
-			_impure_ptr = &( pxCurrentTCB->xNewLib_reent );
+			_global_impure_ptr = &( pxCurrentTCB->xNewLib_reent );
 		}
 		#endif /* configUSE_NEWLIB_REENTRANT */
 
@@ -2971,7 +2971,7 @@ void vTaskSwitchContext( void )
 		{
 			/* Switch Newlib's _impure_ptr variable to point to the _reent
 			structure specific to this task. */
-			_impure_ptr = &( pxCurrentTCB->xNewLib_reent );
+			_global_impure_ptr = &( pxCurrentTCB->xNewLib_reent );
 		}
 		#endif /* configUSE_NEWLIB_REENTRANT */
 	}
@@ -5113,4 +5113,43 @@ when performing module tests). */
 
 #endif
 
+
+// esp 32 stuff
+
+
+TaskHandle_t xTaskGetIdleTaskHandleForCPU( UBaseType_t cpuid ) {
+	return NULL;
+}
+
+	BaseType_t xTaskCreatePinnedToCore(	TaskFunction_t pvTaskCode,
+										const char * const pcName,
+										const uint32_t usStackDepth,
+										void * const pvParameters,
+										UBaseType_t uxPriority,
+										TaskHandle_t * const pvCreatedTask,
+										const BaseType_t xCoreID) {
+											return NULL;
+										}
+
+
+BaseType_t xTaskGetAffinity( TaskHandle_t xTask )
+{
+	return NULL;
+}
+
+
+#if ( ( INCLUDE_xTaskGetCurrentTaskHandle == 1 ) || ( configUSE_MUTEXES == 1 ) )
+
+
+	TaskHandle_t xTaskGetCurrentTaskHandleForCPU( BaseType_t cpuid )
+	{
+		return NULL;
+	}
+
+
+#endif /* ( ( INCLUDE_xTaskGetCurrentTaskHandle == 1 ) || ( configUSE_MUTEXES == 1 ) ) */
+
+void vTaskSetThreadLocalStoragePointerAndDelCallback( TaskHandle_t xTaskToSet, BaseType_t xIndex, void *pvValue, TlsDeleteCallbackFunction_t pvDelCallback) {
+	// stub
+}
 

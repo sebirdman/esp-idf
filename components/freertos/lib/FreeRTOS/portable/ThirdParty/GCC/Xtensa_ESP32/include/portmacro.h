@@ -78,7 +78,6 @@ extern "C" {
 #include <xtensa/config/core.h>
 #include <xtensa/config/system.h>	/* required for XSHAL_CLIB */
 #include <xtensa/xtruntime.h>
-#include "esp_crosscore_int.h"
 #include "esp_timer.h"              /* required for FreeRTOS run time stats */
 
 
@@ -202,21 +201,14 @@ behaviour; please keep this in mind if you need any compatibility with other Fre
 */
 void vPortCPUInitializeMutex(portMUX_TYPE *mux);
 #ifdef CONFIG_FREERTOS_PORTMUX_DEBUG
-void vPortCPUAcquireMutex(portMUX_TYPE *mux, const char *function, int line);
-bool vPortCPUAcquireMutexTimeout(portMUX_TYPE *mux, int timeout_cycles, const char *function, int line);
-void vPortCPUReleaseMutex(portMUX_TYPE *mux, const char *function, int line);
+#error CONFIG_FREERTOS_PORTMUX_DEBUG not supported in Amazon FreeRTOS
+#endif
 
-
-void vTaskEnterCritical( portMUX_TYPE *mux, const char *function, int line );
-void vTaskExitCritical( portMUX_TYPE *mux, const char *function, int line );
-#define portENTER_CRITICAL(mux)        vTaskEnterCritical(mux, __FUNCTION__, __LINE__)
-#define portEXIT_CRITICAL(mux)         vTaskExitCritical(mux, __FUNCTION__, __LINE__)
-#define portENTER_CRITICAL_ISR(mux)    vTaskEnterCritical(mux, __FUNCTION__, __LINE__)
-#define portEXIT_CRITICAL_ISR(mux)     vTaskExitCritical(mux, __FUNCTION__, __LINE__)
-#else
-void vTaskExitCritical( portMUX_TYPE *mux );
-void vTaskEnterCritical( portMUX_TYPE *mux );
-void vPortCPUAcquireMutex(portMUX_TYPE *mux);
+void vTaskExitCritical();
+void vTaskEnterCritical();
+static inline void vPortConsumeSpinlockArg(int unused, ...)
+{
+}
 
 /** @brief Acquire a portmux spinlock with a timeout
  *
@@ -229,11 +221,13 @@ void vPortCPUAcquireMutex(portMUX_TYPE *mux);
 bool vPortCPUAcquireMutexTimeout(portMUX_TYPE *mux, int timeout_cycles);
 void vPortCPUReleaseMutex(portMUX_TYPE *mux);
 
-#define portENTER_CRITICAL(mux)        vTaskEnterCritical(mux)
-#define portEXIT_CRITICAL(mux)         vTaskExitCritical(mux)
-#define portENTER_CRITICAL_ISR(mux)    vTaskEnterCritical(mux)
-#define portEXIT_CRITICAL_ISR(mux)     vTaskExitCritical(mux)
-#endif
+#define portENTER_CRITICAL(...)        do { vTaskEnterCritical(); vPortConsumeSpinlockArg(0, ##__VA_ARGS__); } while(0)
+#define portEXIT_CRITICAL(...)         do { vTaskExitCritical(); vPortConsumeSpinlockArg(0, ##__VA_ARGS__); } while(0)
+
+
+#define portENTER_CRITICAL_ISR(mux)    vPortCPUAcquireMutexTimeout(mux, portMUX_NO_TIMEOUT)
+#define portEXIT_CRITICAL_ISR(mux)     vPortCPUReleaseMutex(mux)
+
 
 // Critical section management. NW-TODO: replace XTOS_SET_INTLEVEL with more efficient version, if any?
 // These cannot be nested. They should be used with a lot of care and cannot be called from interrupt level.
@@ -258,11 +252,8 @@ static inline unsigned portENTER_CRITICAL_NESTED() {
 
 //Because the ROM routines don't necessarily handle a stack in external RAM correctly, we force
 //the stack memory to always be internal.
-#define portTcbMemoryCaps (MALLOC_CAP_INTERNAL|MALLOC_CAP_8BIT)
-#define portStackMemoryCaps (MALLOC_CAP_INTERNAL|MALLOC_CAP_8BIT)
-
-#define pvPortMallocTcbMem(size) heap_caps_malloc(size, portTcbMemoryCaps)
-#define pvPortMallocStackMem(size)  heap_caps_malloc(size, portStackMemoryCaps)
+#define pvPortMallocTcbMem(size) heap_caps_malloc(size, MALLOC_CAP_INTERNAL|MALLOC_CAP_8BIT)
+#define pvPortMallocStackMem(size)  heap_caps_malloc(size, MALLOC_CAP_INTERNAL|MALLOC_CAP_8BIT)
 
 //xTaskCreateStatic uses these functions to check incoming memory.
 #define portVALID_TCB_MEM(ptr) (esp_ptr_internal(ptr) && esp_ptr_byte_accessible(ptr))
@@ -320,15 +311,6 @@ void _frxt_setup_switch( void );
 
 static inline uint32_t xPortGetCoreID();
 
-/* Yielding within an API call (when interrupts are off), means the yield should be delayed
-   until interrupts are re-enabled.
-
-   To do this, we use the "cross-core" interrupt as a trigger to yield on this core when interrupts are re-enabled.This
-   is the same interrupt & code path which is used to trigger a yield between CPUs, although in this case the yield is
-   happening on the same CPU.
-*/
-#define portYIELD_WITHIN_API() esp_crosscore_int_send_yield(xPortGetCoreID())
-
 /*-----------------------------------------------------------*/
 
 /* Task function macros as described on the FreeRTOS.org WEB site. */
@@ -367,18 +349,73 @@ typedef struct {
 	#define PRIVILEGED_DATA
 #endif
 
-extern void esp_vApplicationIdleHook( void );
-extern void esp_vApplicationTickHook( void );
-
-#ifndef CONFIG_FREERTOS_LEGACY_HOOKS
-#define vApplicationIdleHook    esp_vApplicationIdleHook
-#define vApplicationTickHook    esp_vApplicationTickHook
-#endif /* !CONFIG_FREERTOS_LEGACY_HOOKS */
 
 void _xt_coproc_release(volatile void * coproc_sa_base);
-void vApplicationSleep( TickType_t xExpectedIdleTime );
 
-#define portSUPPRESS_TICKS_AND_SLEEP( idleTime ) vApplicationSleep( idleTime )
+
+/*
+ * Map to the memory management routines required for the port.
+ *
+ * Note that libc standard malloc/free are also available for
+ * non-FreeRTOS-specific code, and behave the same as
+ * pvPortMalloc()/vPortFree().
+ */
+#define pvPortMalloc heap_caps_malloc_default
+#define vPortFree heap_caps_free
+#define xPortGetFreeHeapSize esp_get_free_heap_size
+#define xPortGetMinimumEverFreeHeapSize esp_get_minimum_free_heap_size
+
+/*
+ * Send an interrupt to another core in order to make the task running
+ * on it yield for a higher-priority task.
+ */
+
+void vPortYieldOtherCore( BaseType_t coreid) PRIVILEGED_FUNCTION;
+
+
+/*
+ Callback to set a watchpoint on the end of the stack. Called every context switch to change the stack
+ watchpoint around.
+ */
+void vPortSetStackWatchpoint( void* pxStackStart );
+
+/*
+ * Returns true if the current core is in ISR context; low prio ISR, med prio ISR or timer tick ISR. High prio ISRs
+ * aren't detected here, but they normally cannot call C code, so that should not be an issue anyway.
+ */
+BaseType_t xPortInIsrContext();
+
+/*
+ * This function will be called in High prio ISRs. Returns true if the current core was in ISR context
+ * before calling into high prio ISR context.
+ */
+BaseType_t xPortInterruptedFromISRContext();
+
+/*
+ * The structures and methods of manipulating the MPU are contained within the
+ * port layer.
+ *
+ * Fills the xMPUSettings structure with the memory region information
+ * contained in xRegions.
+ */
+#if( portUSING_MPU_WRAPPERS == 1 )
+    struct xMEMORY_REGION;
+    void vPortStoreTaskMPUSettings( xMPU_SETTINGS *xMPUSettings, const struct xMEMORY_REGION * const xRegions, StackType_t *pxBottomOfStack, uint32_t usStackDepth ) PRIVILEGED_FUNCTION;
+    void vPortReleaseTaskMPUSettings( xMPU_SETTINGS *xMPUSettings );
+#endif
+
+/* Multi-core: get current core ID */
+static inline uint32_t IRAM_ATTR xPortGetCoreID() {
+    int id;
+    asm (
+        "rsr.prid %0\n"
+        " extui %0,%0,13,1"
+        :"=r"(id));
+    return id;
+}
+
+/* Get tick rate per second */
+uint32_t xPortGetTickRateHz(void);
 
 // porttrace
 #if configUSE_TRACE_FACILITY_2
@@ -391,6 +428,17 @@ void vApplicationSleep( TickType_t xExpectedIdleTime );
 void exit(int);
 #define configASSERT( x )   if (!(x)) { porttracePrint(-1); printf("\nAssertion failed in %s:%d\n", __FILE__, __LINE__); exit(-1); }
 #endif
+
+// esp32 
+extern void esp_vApplicationIdleHook( void );
+extern void esp_vApplicationTickHook( void );
+
+
+#ifndef CONFIG_FREERTOS_LEGACY_HOOKS
+#define vApplicationIdleHook    esp_vApplicationIdleHook
+#define vApplicationTickHook    esp_vApplicationTickHook
+#endif /* !CONFIG_FREERTOS_LEGACY_HOOKS */
+
 
 #endif // __ASSEMBLER__
 
