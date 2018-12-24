@@ -25,3 +25,4 @@ struct _reent* __getreent() {
 		return &currTask->xNewLib_reent;
 	}
 }
+

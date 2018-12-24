@@ -120,6 +120,8 @@ typedef struct QueueDefinition
 		uint8_t ucQueueType;
 	#endif
 
+	portMUX_TYPE mux; //Mutex required due to SMP
+
 } xQUEUE;
 
 /* The old xQUEUE name is maintained above then typedefed to the new Queue_t
@@ -230,7 +232,7 @@ static void prvInitialiseNewQueue( const UBaseType_t uxQueueLength, const UBaseT
  * accessing the queue event lists.
  */
 #define prvLockQueue( pxQueue )								\
-	taskENTER_CRITICAL();									\
+	portENTER_CRITICAL(&pxQueue->mux);									\
 	{														\
 		if( ( pxQueue )->cRxLock == queueUNLOCKED )			\
 		{													\
@@ -241,7 +243,7 @@ static void prvInitialiseNewQueue( const UBaseType_t uxQueueLength, const UBaseT
 			( pxQueue )->cTxLock = queueLOCKED_UNMODIFIED;	\
 		}													\
 	}														\
-	taskEXIT_CRITICAL()
+	portEXIT_CRITICAL(&pxQueue->mux)
 /*-----------------------------------------------------------*/
 
 BaseType_t xQueueGenericReset( QueueHandle_t xQueue, BaseType_t xNewQueue )
@@ -250,7 +252,7 @@ Queue_t * const pxQueue = ( Queue_t * ) xQueue;
 
 	configASSERT( pxQueue );
 
-	taskENTER_CRITICAL();
+	portENTER_CRITICAL(&pxQueue->mux);
 	{
 		pxQueue->pcTail = pxQueue->pcHead + ( pxQueue->uxLength * pxQueue->uxItemSize );
 		pxQueue->uxMessagesWaiting = ( UBaseType_t ) 0U;
@@ -289,7 +291,7 @@ Queue_t * const pxQueue = ( Queue_t * ) xQueue;
 			vListInitialise( &( pxQueue->xTasksWaitingToReceive ) );
 		}
 	}
-	taskEXIT_CRITICAL();
+	portEXIT_CRITICAL(&pxQueue->mux);
 
 	/* A value is returned for calling semantic consistency with previous
 	versions. */
@@ -463,6 +465,8 @@ static void prvInitialiseNewQueue( const UBaseType_t uxQueueLength, const UBaseT
 			/* In case this is a recursive mutex. */
 			pxNewQueue->u.uxRecursiveCallCount = 0;
 
+ 			vPortCPUInitializeMutex(&pxNewQueue->mux);
+
 			traceCREATE_MUTEX( pxNewQueue );
 
 			/* Start with the semaphore in the expected state. */
@@ -524,7 +528,7 @@ static void prvInitialiseNewQueue( const UBaseType_t uxQueueLength, const UBaseT
 		calling task is the mutex holder, but not a good way of determining the
 		identity of the mutex holder, as the holder may change between the
 		following critical section exiting and the function returning. */
-		taskENTER_CRITICAL();
+		portENTER_CRITICAL(& ( ( Queue_t * ) xSemaphore )->mux);
 		{
 			if( ( ( Queue_t * ) xSemaphore )->uxQueueType == queueQUEUE_IS_MUTEX )
 			{
@@ -535,7 +539,7 @@ static void prvInitialiseNewQueue( const UBaseType_t uxQueueLength, const UBaseT
 				pxReturn = NULL;
 			}
 		}
-		taskEXIT_CRITICAL();
+		portEXIT_CRITICAL(& ( ( Queue_t * ) xSemaphore )->mux);
 
 		return pxReturn;
 	} /*lint !e818 xSemaphore cannot be a pointer to const because it is a typedef. */
@@ -645,7 +649,7 @@ static void prvInitialiseNewQueue( const UBaseType_t uxQueueLength, const UBaseT
 		}
 		else
 		{
-			xReturn = xQueueSemaphoreTake( pxMutex, xTicksToWait );
+				xReturn = xQueueSemaphoreTake( pxMutex, xTicksToWait );
 
 			/* pdPASS will only be returned if the mutex was successfully
 			obtained.  The calling task may have entered the Blocked state
@@ -743,7 +747,7 @@ Queue_t * const pxQueue = ( Queue_t * ) xQueue;
 	of execution time efficiency. */
 	for( ;; )
 	{
-		taskENTER_CRITICAL();
+		portENTER_CRITICAL(&pxQueue->mux);
 		{
 			/* Is there room on the queue now?  The running task must be the
 			highest priority task wanting to access the queue.  If the head item
@@ -837,7 +841,7 @@ Queue_t * const pxQueue = ( Queue_t * ) xQueue;
 				}
 				#endif /* configUSE_QUEUE_SETS */
 
-				taskEXIT_CRITICAL();
+				portEXIT_CRITICAL(&pxQueue->mux);
 				return pdPASS;
 			}
 			else
@@ -846,7 +850,7 @@ Queue_t * const pxQueue = ( Queue_t * ) xQueue;
 				{
 					/* The queue was full and no block time is specified (or
 					the block time has expired) so leave now. */
-					taskEXIT_CRITICAL();
+					portEXIT_CRITICAL(&pxQueue->mux);
 
 					/* Return to the original privilege level before exiting
 					the function. */
@@ -867,7 +871,7 @@ Queue_t * const pxQueue = ( Queue_t * ) xQueue;
 				}
 			}
 		}
-		taskEXIT_CRITICAL();
+		portEXIT_CRITICAL(&pxQueue->mux);
 
 		/* Interrupts and other tasks can send to and receive from the queue
 		now the critical section has been exited. */
@@ -1263,7 +1267,7 @@ Queue_t * const pxQueue = ( Queue_t * ) xQueue;
 
 	for( ;; )
 	{
-		taskENTER_CRITICAL();
+		portENTER_CRITICAL(&pxQueue->mux);
 		{
 			const UBaseType_t uxMessagesWaiting = pxQueue->uxMessagesWaiting;
 
@@ -1295,7 +1299,7 @@ Queue_t * const pxQueue = ( Queue_t * ) xQueue;
 					mtCOVERAGE_TEST_MARKER();
 				}
 
-				taskEXIT_CRITICAL();
+				portEXIT_CRITICAL(&pxQueue->mux);
 				return pdPASS;
 			}
 			else
@@ -1304,7 +1308,7 @@ Queue_t * const pxQueue = ( Queue_t * ) xQueue;
 				{
 					/* The queue was empty and no block time is specified (or
 					the block time has expired) so leave now. */
-					taskEXIT_CRITICAL();
+					portEXIT_CRITICAL(&pxQueue->mux);
 					traceQUEUE_RECEIVE_FAILED( pxQueue );
 					return errQUEUE_EMPTY;
 				}
@@ -1322,7 +1326,7 @@ Queue_t * const pxQueue = ( Queue_t * ) xQueue;
 				}
 			}
 		}
-		taskEXIT_CRITICAL();
+		portEXIT_CRITICAL(&pxQueue->mux);
 
 		/* Interrupts and other tasks can send to and receive from the queue
 		now the critical section has been exited. */
@@ -1409,7 +1413,7 @@ Queue_t * const pxQueue = ( Queue_t * ) xQueue;
 
 	for( ;; )
 	{
-		taskENTER_CRITICAL();
+		portENTER_CRITICAL(&pxQueue->cRxLock);
 		{
 			/* Semaphores are queues with an item size of 0, and where the
 			number of messages in the queue is the semaphore's count value. */
@@ -1458,7 +1462,7 @@ Queue_t * const pxQueue = ( Queue_t * ) xQueue;
 					mtCOVERAGE_TEST_MARKER();
 				}
 
-				taskEXIT_CRITICAL();
+				portEXIT_CRITICAL(&pxQueue->mux);
 				return pdPASS;
 			}
 			else
@@ -1476,7 +1480,7 @@ Queue_t * const pxQueue = ( Queue_t * ) xQueue;
 
 					/* The semaphore count was 0 and no block time is specified
 					(or the block time has expired) so exit now. */
-					taskEXIT_CRITICAL();
+					portEXIT_CRITICAL(&pxQueue->mux);
 					traceQUEUE_RECEIVE_FAILED( pxQueue );
 					return errQUEUE_EMPTY;
 				}
@@ -1494,7 +1498,7 @@ Queue_t * const pxQueue = ( Queue_t * ) xQueue;
 				}
 			}
 		}
-		taskEXIT_CRITICAL();
+		portEXIT_CRITICAL(&pxQueue->mux);
 
 		/* Interrupts and other tasks can give to and take from the semaphore
 		now the critical section has been exited. */
@@ -1517,11 +1521,11 @@ Queue_t * const pxQueue = ( Queue_t * ) xQueue;
 				{
 					if( pxQueue->uxQueueType == queueQUEUE_IS_MUTEX )
 					{
-						taskENTER_CRITICAL();
+						portENTER_CRITICAL(&pxQueue->mux);
 						{
 							xInheritanceOccurred = xTaskPriorityInherit( ( void * ) pxQueue->pxMutexHolder );
 						}
-						taskEXIT_CRITICAL();
+						portEXIT_CRITICAL(&pxQueue->mux);
 					}
 					else
 					{
@@ -1568,7 +1572,7 @@ Queue_t * const pxQueue = ( Queue_t * ) xQueue;
 					test the mutex type again to check it is actually a mutex. */
 					if( xInheritanceOccurred != pdFALSE )
 					{
-						taskENTER_CRITICAL();
+						portENTER_CRITICAL(&pxQueue->mux);
 						{
 							UBaseType_t uxHighestWaitingPriority;
 
@@ -1580,7 +1584,7 @@ Queue_t * const pxQueue = ( Queue_t * ) xQueue;
 							uxHighestWaitingPriority = prvGetDisinheritPriorityAfterTimeout( pxQueue );
 							vTaskPriorityDisinheritAfterTimeout( ( void * ) pxQueue->pxMutexHolder, uxHighestWaitingPriority );
 						}
-						taskEXIT_CRITICAL();
+						portEXIT_CRITICAL(&pxQueue->mux);
 					}
 				}
 				#endif /* configUSE_MUTEXES */
@@ -1625,7 +1629,7 @@ Queue_t * const pxQueue = ( Queue_t * ) xQueue;
 
 	for( ;; )
 	{
-		taskENTER_CRITICAL();
+		portENTER_CRITICAL(&pxQueue->mux);
 		{
 			const UBaseType_t uxMessagesWaiting = pxQueue->uxMessagesWaiting;
 
@@ -1663,7 +1667,7 @@ Queue_t * const pxQueue = ( Queue_t * ) xQueue;
 					mtCOVERAGE_TEST_MARKER();
 				}
 
-				taskEXIT_CRITICAL();
+				portEXIT_CRITICAL(&pxQueue->mux);
 				return pdPASS;
 			}
 			else
@@ -1672,7 +1676,7 @@ Queue_t * const pxQueue = ( Queue_t * ) xQueue;
 				{
 					/* The queue was empty and no block time is specified (or
 					the block time has expired) so leave now. */
-					taskEXIT_CRITICAL();
+					portEXIT_CRITICAL(&pxQueue->mux);
 					traceQUEUE_PEEK_FAILED( pxQueue );
 					return errQUEUE_EMPTY;
 				}
@@ -1691,7 +1695,7 @@ Queue_t * const pxQueue = ( Queue_t * ) xQueue;
 				}
 			}
 		}
-		taskEXIT_CRITICAL();
+		portEXIT_CRITICAL(&pxQueue->mux);
 
 		/* Interrupts and other tasks can send to and receive from the queue
 		now the critical section has been exited. */
@@ -1898,11 +1902,11 @@ UBaseType_t uxReturn;
 
 	configASSERT( xQueue );
 
-	taskENTER_CRITICAL();
+	portENTER_CRITICAL(& ( ( Queue_t * ) xQueue )->mux);
 	{
 		uxReturn = ( ( Queue_t * ) xQueue )->uxMessagesWaiting;
 	}
-	taskEXIT_CRITICAL();
+	portEXIT_CRITICAL(&( ( Queue_t * ) xQueue )->mux);
 
 	return uxReturn;
 } /*lint !e818 Pointer cannot be declared const as xQueue is a typedef not pointer. */
@@ -1916,11 +1920,11 @@ Queue_t *pxQueue;
 	pxQueue = ( Queue_t * ) xQueue;
 	configASSERT( pxQueue );
 
-	taskENTER_CRITICAL();
+	portENTER_CRITICAL(&pxQueue->mux);
 	{
 		uxReturn = pxQueue->uxLength - pxQueue->uxMessagesWaiting;
 	}
-	taskEXIT_CRITICAL();
+	portEXIT_CRITICAL(&pxQueue->mux);
 
 	return uxReturn;
 } /*lint !e818 Pointer cannot be declared const as xQueue is a typedef not pointer. */
@@ -2142,7 +2146,7 @@ static void prvUnlockQueue( Queue_t * const pxQueue )
 	removed from the queue while the queue was locked.  When a queue is
 	locked items can be added or removed, but the event lists cannot be
 	updated. */
-	taskENTER_CRITICAL();
+	portENTER_CRITICAL(&pxQueue->mux);
 	{
 		int8_t cTxLock = pxQueue->cTxLock;
 
@@ -2220,10 +2224,10 @@ static void prvUnlockQueue( Queue_t * const pxQueue )
 
 		pxQueue->cTxLock = queueUNLOCKED;
 	}
-	taskEXIT_CRITICAL();
+	portEXIT_CRITICAL(&pxQueue->mux);
 
 	/* Do the same for the Rx lock. */
-	taskENTER_CRITICAL();
+	portENTER_CRITICAL(&pxQueue->mux);
 	{
 		int8_t cRxLock = pxQueue->cRxLock;
 
@@ -2250,7 +2254,7 @@ static void prvUnlockQueue( Queue_t * const pxQueue )
 
 		pxQueue->cRxLock = queueUNLOCKED;
 	}
-	taskEXIT_CRITICAL();
+	portEXIT_CRITICAL(&pxQueue->mux);
 }
 /*-----------------------------------------------------------*/
 
@@ -2258,7 +2262,7 @@ static BaseType_t prvIsQueueEmpty( const Queue_t *pxQueue )
 {
 BaseType_t xReturn;
 
-	taskENTER_CRITICAL();
+	portENTER_CRITICAL(&pxQueue->mux);
 	{
 		if( pxQueue->uxMessagesWaiting == ( UBaseType_t )  0 )
 		{
@@ -2269,7 +2273,7 @@ BaseType_t xReturn;
 			xReturn = pdFALSE;
 		}
 	}
-	taskEXIT_CRITICAL();
+	portEXIT_CRITICAL(&pxQueue->mux);
 
 	return xReturn;
 }
@@ -2297,7 +2301,7 @@ static BaseType_t prvIsQueueFull( const Queue_t *pxQueue )
 {
 BaseType_t xReturn;
 
-	taskENTER_CRITICAL();
+	portENTER_CRITICAL(&pxQueue->mux);
 	{
 		if( pxQueue->uxMessagesWaiting == pxQueue->uxLength )
 		{
@@ -2308,7 +2312,7 @@ BaseType_t xReturn;
 			xReturn = pdFALSE;
 		}
 	}
-	taskEXIT_CRITICAL();
+	portEXIT_CRITICAL(&pxQueue->mux);
 
 	return xReturn;
 }
@@ -2752,7 +2756,7 @@ BaseType_t xReturn;
 	{
 	BaseType_t xReturn;
 
-		taskENTER_CRITICAL();
+		portENTER_CRITICAL(&( ( Queue_t * ) xQueueOrSemaphore )->mux);
 		{
 			if( ( ( Queue_t * ) xQueueOrSemaphore )->pxQueueSetContainer != NULL )
 			{
@@ -2771,7 +2775,7 @@ BaseType_t xReturn;
 				xReturn = pdPASS;
 			}
 		}
-		taskEXIT_CRITICAL();
+		portEXIT_CRITICAL(&( ( Queue_t * ) xQueueOrSemaphore )->mux);
 
 		return xReturn;
 	}
@@ -2800,12 +2804,12 @@ BaseType_t xReturn;
 		}
 		else
 		{
-			taskENTER_CRITICAL();
+			portENTER_CRITICAL(&pxQueueOrSemaphore->mux);
 			{
 				/* The queue is no longer contained in the set. */
 				pxQueueOrSemaphore->pxQueueSetContainer = NULL;
 			}
-			taskEXIT_CRITICAL();
+			portEXIT_CRITICAL(&pxQueueOrSemaphore->mux);
 			xReturn = pdPASS;
 		}
 

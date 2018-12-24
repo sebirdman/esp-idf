@@ -75,6 +75,8 @@ functions but without including stdio.h here. */
  */
 #define tskSTACK_FILL_BYTE	( 0xa5U )
 
+static portMUX_TYPE task_spinlock = portMUX_INITIALIZER_UNLOCKED;
+
 /* Sometimes the FreeRTOSConfig.h settings only allow a task to be created using
 dynamically allocated RAM, in which case when any task is deleted it is known
 that both the task's stack and TCB need to be freed.  Sometimes the
@@ -246,6 +248,9 @@ count overflows. */
  * see if the parameter is NULL and returns a pointer to the appropriate TCB.
  */
 #define prvGetTCBFromHandle( pxHandle ) ( ( ( pxHandle ) == NULL ) ? ( TCB_t * ) pxCurrentTCB : ( TCB_t * ) ( pxHandle ) )
+
+struct _reent *_impure_ptr;
+
 
 /* The item value of the event list item is normally used to hold the priority
 of the task to which it belongs (coded to allow it to be held in reverse
@@ -1039,7 +1044,7 @@ static void prvAddNewTaskToReadyList( TCB_t *pxNewTCB )
 {
 	/* Ensure interrupts don't access the task lists while the lists are being
 	updated. */
-	taskENTER_CRITICAL();
+	portENTER_CRITICAL(&task_spinlock);
 	{
 		uxCurrentNumberOfTasks++;
 		if( pxCurrentTCB == NULL )
@@ -1096,7 +1101,7 @@ static void prvAddNewTaskToReadyList( TCB_t *pxNewTCB )
 
 		portSETUP_TCB( pxNewTCB );
 	}
-	taskEXIT_CRITICAL();
+	portEXIT_CRITICAL(&task_spinlock);
 
 	if( xSchedulerRunning != pdFALSE )
 	{
@@ -1124,7 +1129,7 @@ static void prvAddNewTaskToReadyList( TCB_t *pxNewTCB )
 	{
 	TCB_t *pxTCB;
 
-		taskENTER_CRITICAL();
+		portENTER_CRITICAL(&task_spinlock);
 		{
 			/* If null is passed in here then it is the calling task that is
 			being deleted. */
@@ -1189,7 +1194,7 @@ static void prvAddNewTaskToReadyList( TCB_t *pxNewTCB )
 
 			traceTASK_DELETE( pxTCB );
 		}
-		taskEXIT_CRITICAL();
+		portEXIT_CRITICAL(&task_spinlock);
 
 		/* Force a reschedule if it is the currently running task that has just
 		been deleted. */
@@ -1356,11 +1361,11 @@ static void prvAddNewTaskToReadyList( TCB_t *pxNewTCB )
 		}
 		else
 		{
-			taskENTER_CRITICAL();
+			portENTER_CRITICAL(&task_spinlock);
 			{
 				pxStateList = ( List_t * ) listLIST_ITEM_CONTAINER( &( pxTCB->xStateListItem ) );
 			}
-			taskEXIT_CRITICAL();
+			portEXIT_CRITICAL(&task_spinlock);
 
 			if( ( pxStateList == pxDelayedTaskList ) || ( pxStateList == pxOverflowDelayedTaskList ) )
 			{
@@ -1417,14 +1422,14 @@ static void prvAddNewTaskToReadyList( TCB_t *pxNewTCB )
 	TCB_t *pxTCB;
 	UBaseType_t uxReturn;
 
-		taskENTER_CRITICAL();
+		portENTER_CRITICAL(&task_spinlock);
 		{
 			/* If null is passed in here then it is the priority of the that
 			called uxTaskPriorityGet() that is being queried. */
 			pxTCB = prvGetTCBFromHandle( xTask );
 			uxReturn = pxTCB->uxPriority;
 		}
-		taskEXIT_CRITICAL();
+		portEXIT_CRITICAL(&task_spinlock);
 
 		return uxReturn;
 	}
@@ -1492,7 +1497,7 @@ static void prvAddNewTaskToReadyList( TCB_t *pxNewTCB )
 			mtCOVERAGE_TEST_MARKER();
 		}
 
-		taskENTER_CRITICAL();
+		portENTER_CRITICAL(&task_spinlock);
 		{
 			/* If null is passed in here then it is the priority of the calling
 			task that is being changed. */
@@ -1630,7 +1635,7 @@ static void prvAddNewTaskToReadyList( TCB_t *pxNewTCB )
 				( void ) uxPriorityUsedOnEntry;
 			}
 		}
-		taskEXIT_CRITICAL();
+		portEXIT_CRITICAL(&task_spinlock);
 	}
 
 #endif /* INCLUDE_vTaskPrioritySet */
@@ -1642,7 +1647,7 @@ static void prvAddNewTaskToReadyList( TCB_t *pxNewTCB )
 	{
 	TCB_t *pxTCB;
 
-		taskENTER_CRITICAL();
+		portENTER_CRITICAL(&task_spinlock);
 		{
 			/* If null is passed in here then it is the running task that is
 			being suspended. */
@@ -1684,17 +1689,17 @@ static void prvAddNewTaskToReadyList( TCB_t *pxNewTCB )
 			}
 			#endif
 		}
-		taskEXIT_CRITICAL();
+		portEXIT_CRITICAL(&task_spinlock);
 
 		if( xSchedulerRunning != pdFALSE )
 		{
 			/* Reset the next expected unblock time in case it referred to the
 			task that is now in the Suspended state. */
-			taskENTER_CRITICAL();
+			portENTER_CRITICAL(&task_spinlock);
 			{
 				prvResetNextTaskUnblockTime();
 			}
-			taskEXIT_CRITICAL();
+			portEXIT_CRITICAL(&task_spinlock);
 		}
 		else
 		{
@@ -1796,7 +1801,7 @@ static void prvAddNewTaskToReadyList( TCB_t *pxNewTCB )
 		currently executing task. */
 		if( ( pxTCB != NULL ) && ( pxTCB != pxCurrentTCB ) )
 		{
-			taskENTER_CRITICAL();
+			portENTER_CRITICAL(&task_spinlock);
 			{
 				if( prvTaskIsTaskSuspended( pxTCB ) != pdFALSE )
 				{
@@ -1825,7 +1830,7 @@ static void prvAddNewTaskToReadyList( TCB_t *pxNewTCB )
 					mtCOVERAGE_TEST_MARKER();
 				}
 			}
-			taskEXIT_CRITICAL();
+			portEXIT_CRITICAL(&task_spinlock);
 		}
 		else
 		{
@@ -1987,7 +1992,7 @@ BaseType_t xReturn;
 		{
 			/* Switch Newlib's _impure_ptr variable to point to the _reent
 			structure specific to the task that will run first. */
-			_global_impure_ptr = &( pxCurrentTCB->xNewLib_reent );
+			_impure_ptr = &( pxCurrentTCB->xNewLib_reent );
 		}
 		#endif /* configUSE_NEWLIB_REENTRANT */
 
@@ -2127,7 +2132,7 @@ BaseType_t xAlreadyYielded = pdFALSE;
 	removed task will have been added to the xPendingReadyList.  Once the
 	scheduler has been resumed it is safe to move all the pending ready
 	tasks from this list into their appropriate ready list. */
-	taskENTER_CRITICAL();
+	portENTER_CRITICAL(&task_spinlock);
 	{
 		--uxSchedulerSuspended;
 
@@ -2217,7 +2222,7 @@ BaseType_t xAlreadyYielded = pdFALSE;
 			mtCOVERAGE_TEST_MARKER();
 		}
 	}
-	taskEXIT_CRITICAL();
+	portEXIT_CRITICAL(&task_spinlock);
 
 	return xAlreadyYielded;
 }
@@ -2593,7 +2598,7 @@ implementations require configUSE_TICKLESS_IDLE to be set to a value other than
 				the event list too.  Interrupts can touch the event list item,
 				even though the scheduler is suspended, so a critical section
 				is used. */
-				taskENTER_CRITICAL();
+				portENTER_CRITICAL(&task_spinlock);
 				{
 					if( listLIST_ITEM_CONTAINER( &( pxTCB->xEventListItem ) ) != NULL )
 					{
@@ -2605,7 +2610,7 @@ implementations require configUSE_TICKLESS_IDLE to be set to a value other than
 						mtCOVERAGE_TEST_MARKER();
 					}
 				}
-				taskEXIT_CRITICAL();
+				portEXIT_CRITICAL(&task_spinlock);
 
 				/* Place the unblocked task into the appropriate ready list. */
 				prvAddTaskToReadyList( pxTCB );
@@ -2834,9 +2839,9 @@ BaseType_t xSwitchRequired = pdFALSE;
 
 		/* Save the hook function in the TCB.  A critical section is required as
 		the value can be accessed from an interrupt. */
-		taskENTER_CRITICAL();
+		portENTER_CRITICAL(&task_spinlock);
 			xTCB->pxTaskTag = pxHookFunction;
-		taskEXIT_CRITICAL();
+		portEXIT_CRITICAL(&task_spinlock);
 	}
 
 #endif /* configUSE_APPLICATION_TASK_TAG */
@@ -2861,11 +2866,11 @@ BaseType_t xSwitchRequired = pdFALSE;
 
 		/* Save the hook function in the TCB.  A critical section is required as
 		the value can be accessed from an interrupt. */
-		taskENTER_CRITICAL();
+		portENTER_CRITICAL(&task_spinlock);
 		{
 			xReturn = xTCB->pxTaskTag;
 		}
-		taskEXIT_CRITICAL();
+		portEXIT_CRITICAL(&task_spinlock);
 
 		return xReturn;
 	}
@@ -2971,7 +2976,7 @@ void vTaskSwitchContext( void )
 		{
 			/* Switch Newlib's _impure_ptr variable to point to the _reent
 			structure specific to this task. */
-			_global_impure_ptr = &( pxCurrentTCB->xNewLib_reent );
+			_impure_ptr = &( pxCurrentTCB->xNewLib_reent );
 		}
 		#endif /* configUSE_NEWLIB_REENTRANT */
 	}
@@ -3157,12 +3162,12 @@ TCB_t *pxUnblockedTCB;
 void vTaskSetTimeOutState( TimeOut_t * const pxTimeOut )
 {
 	configASSERT( pxTimeOut );
-	taskENTER_CRITICAL();
+	portENTER_CRITICAL(&task_spinlock);
 	{
 		pxTimeOut->xOverflowCount = xNumOfOverflows;
 		pxTimeOut->xTimeOnEntering = xTickCount;
 	}
-	taskEXIT_CRITICAL();
+	portEXIT_CRITICAL(&task_spinlock);
 }
 /*-----------------------------------------------------------*/
 
@@ -3181,7 +3186,7 @@ BaseType_t xReturn;
 	configASSERT( pxTimeOut );
 	configASSERT( pxTicksToWait );
 
-	taskENTER_CRITICAL();
+	portENTER_CRITICAL(&task_spinlock);
 	{
 		/* Minor optimisation.  The tick count cannot change in this block. */
 		const TickType_t xConstTickCount = xTickCount;
@@ -3231,7 +3236,7 @@ BaseType_t xReturn;
 			xReturn = pdTRUE;
 		}
 	}
-	taskEXIT_CRITICAL();
+	portEXIT_CRITICAL(&task_spinlock);
 
 	return xReturn;
 }
@@ -3549,14 +3554,14 @@ static void prvCheckTasksWaitingTermination( void )
 		being called too often in the idle task. */
 		while( uxDeletedTasksWaitingCleanUp > ( UBaseType_t ) 0U )
 		{
-			taskENTER_CRITICAL();
+			portENTER_CRITICAL(&task_spinlock);
 			{
 				pxTCB = ( TCB_t * ) listGET_OWNER_OF_HEAD_ENTRY( ( &xTasksWaitingTermination ) );
 				( void ) uxListRemove( &( pxTCB->xStateListItem ) );
 				--uxCurrentNumberOfTasks;
 				--uxDeletedTasksWaitingCleanUp;
 			}
-			taskEXIT_CRITICAL();
+			portEXIT_CRITICAL(&task_spinlock);
 
 			prvDeleteTCB( pxTCB );
 		}
@@ -4487,7 +4492,7 @@ TickType_t uxReturn;
 	{
 	uint32_t ulReturn;
 
-		taskENTER_CRITICAL();
+		portENTER_CRITICAL(&task_spinlock);
 		{
 			/* Only block if the notification count is not already non-zero. */
 			if( pxCurrentTCB->ulNotifiedValue == 0UL )
@@ -4516,9 +4521,9 @@ TickType_t uxReturn;
 				mtCOVERAGE_TEST_MARKER();
 			}
 		}
-		taskEXIT_CRITICAL();
+		portEXIT_CRITICAL(&task_spinlock);
 
-		taskENTER_CRITICAL();
+		portENTER_CRITICAL(&task_spinlock);
 		{
 			traceTASK_NOTIFY_TAKE();
 			ulReturn = pxCurrentTCB->ulNotifiedValue;
@@ -4541,7 +4546,7 @@ TickType_t uxReturn;
 
 			pxCurrentTCB->ucNotifyState = taskNOT_WAITING_NOTIFICATION;
 		}
-		taskEXIT_CRITICAL();
+		portEXIT_CRITICAL(&task_spinlock);
 
 		return ulReturn;
 	}
@@ -4555,7 +4560,7 @@ TickType_t uxReturn;
 	{
 	BaseType_t xReturn;
 
-		taskENTER_CRITICAL();
+		portENTER_CRITICAL(&task_spinlock);
 		{
 			/* Only block if a notification is not already pending. */
 			if( pxCurrentTCB->ucNotifyState != taskNOTIFICATION_RECEIVED )
@@ -4589,9 +4594,9 @@ TickType_t uxReturn;
 				mtCOVERAGE_TEST_MARKER();
 			}
 		}
-		taskEXIT_CRITICAL();
+		portEXIT_CRITICAL(&task_spinlock);
 
-		taskENTER_CRITICAL();
+		portENTER_CRITICAL(&task_spinlock);
 		{
 			traceTASK_NOTIFY_WAIT();
 
@@ -4621,7 +4626,7 @@ TickType_t uxReturn;
 
 			pxCurrentTCB->ucNotifyState = taskNOT_WAITING_NOTIFICATION;
 		}
-		taskEXIT_CRITICAL();
+		portEXIT_CRITICAL(&task_spinlock);
 
 		return xReturn;
 	}
@@ -4640,7 +4645,7 @@ TickType_t uxReturn;
 		configASSERT( xTaskToNotify );
 		pxTCB = ( TCB_t * ) xTaskToNotify;
 
-		taskENTER_CRITICAL();
+		portENTER_CRITICAL(&task_spinlock);
 		{
 			if( pulPreviousNotificationValue != NULL )
 			{
@@ -4727,7 +4732,7 @@ TickType_t uxReturn;
 				mtCOVERAGE_TEST_MARKER();
 			}
 		}
-		taskEXIT_CRITICAL();
+		portEXIT_CRITICAL(&task_spinlock);
 
 		return xReturn;
 	}
@@ -4959,7 +4964,7 @@ TickType_t uxReturn;
 		its notification state cleared. */
 		pxTCB = prvGetTCBFromHandle( xTask );
 
-		taskENTER_CRITICAL();
+		portENTER_CRITICAL(&task_spinlock);
 		{
 			if( pxTCB->ucNotifyState == taskNOTIFICATION_RECEIVED )
 			{
@@ -4971,7 +4976,7 @@ TickType_t uxReturn;
 				xReturn = pdFAIL;
 			}
 		}
-		taskEXIT_CRITICAL();
+		portEXIT_CRITICAL(&task_spinlock);
 
 		return xReturn;
 	}
@@ -5114,42 +5119,26 @@ when performing module tests). */
 #endif
 
 
-// esp 32 stuff
 
 
-TaskHandle_t xTaskGetIdleTaskHandleForCPU( UBaseType_t cpuid ) {
-	return NULL;
+BaseType_t xTaskCreatePinnedToCore(	TaskFunction_t pvTaskCode,
+									const char * const pcName,
+									const uint32_t usStackDepth,
+									void * const pvParameters,
+									UBaseType_t uxPriority,
+									TaskHandle_t * const pvCreatedTask,
+									const BaseType_t xCoreID)
+{
+	return xTaskCreate(pvTaskCode, pcName, usStackDepth, pvParameters, uxPriority, pvCreatedTask);
 }
-
-	BaseType_t xTaskCreatePinnedToCore(	TaskFunction_t pvTaskCode,
-										const char * const pcName,
-										const uint32_t usStackDepth,
-										void * const pvParameters,
-										UBaseType_t uxPriority,
-										TaskHandle_t * const pvCreatedTask,
-										const BaseType_t xCoreID) {
-											return NULL;
-										}
 
 
 BaseType_t xTaskGetAffinity( TaskHandle_t xTask )
 {
-	return NULL;
+	return tskNO_AFFINITY;
 }
 
-
-#if ( ( INCLUDE_xTaskGetCurrentTaskHandle == 1 ) || ( configUSE_MUTEXES == 1 ) )
-
-
-	TaskHandle_t xTaskGetCurrentTaskHandleForCPU( BaseType_t cpuid )
-	{
-		return NULL;
-	}
-
-
-#endif /* ( ( INCLUDE_xTaskGetCurrentTaskHandle == 1 ) || ( configUSE_MUTEXES == 1 ) ) */
 
 void vTaskSetThreadLocalStoragePointerAndDelCallback( TaskHandle_t xTaskToSet, BaseType_t xIndex, void *pvValue, TlsDeleteCallbackFunction_t pvDelCallback) {
 	// stub
 }
-

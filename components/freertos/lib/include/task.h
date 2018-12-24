@@ -2493,6 +2493,18 @@ TaskHandle_t xTaskGetIdleTaskHandleForCPU( UBaseType_t cpuid );
 		 */
 		void vTaskSetThreadLocalStoragePointerAndDelCallback( TaskHandle_t xTaskToSet, BaseType_t xIndex, void *pvValue, TlsDeleteCallbackFunction_t pvDelCallback);
 
+
+// esp32
+ #define xTaskGetIdleTaskHandleForCPU(i) xTaskGetIdleTaskHandle()
+
+#if ( ( INCLUDE_xTaskGetCurrentTaskHandle == 1 ) || ( configUSE_MUTEXES == 1 ) )
+
+
+	#define xTaskGetCurrentTaskHandleForCPU(i) xTaskGetCurrentTaskHandle()
+
+#endif /* ( ( INCLUDE_xTaskGetCurrentTaskHandle == 1 ) || ( configUSE_MUTEXES == 1 ) ) */
+
+
 #ifdef __cplusplus
 }
 #endif
