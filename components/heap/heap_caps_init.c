@@ -21,8 +21,8 @@
 #include "esp_heap_caps_init.h"
 #include "soc/soc_memory_layout.h"
 
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
+#include "FreeRTOS.h"
+#include "task.h"
 
 static const char *TAG = "heap_init";
 

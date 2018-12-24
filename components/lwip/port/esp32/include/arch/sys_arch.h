@@ -33,10 +33,10 @@
 #ifndef __SYS_ARCH_H__
 #define __SYS_ARCH_H__
 
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/queue.h"
-#include "freertos/semphr.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "queue.h"
+#include "semphr.h"
 #include "arch/vfs_lwip.h"
 
 #ifdef __cplusplus
@@ -44,12 +44,12 @@ extern "C" {
 #endif
 
 
-typedef xSemaphoreHandle sys_sem_t;
-typedef xSemaphoreHandle sys_mutex_t;
-typedef xTaskHandle sys_thread_t;
+typedef SemaphoreHandle_t sys_sem_t;
+typedef SemaphoreHandle_t sys_mutex_t;
+typedef SemaphoreHandle_t sys_thread_t;
 
 typedef struct sys_mbox_s {
-  xQueueHandle os_mbox;
+  QueueHandle_t os_mbox;
   void *owner;
 }* sys_mbox_t;
 

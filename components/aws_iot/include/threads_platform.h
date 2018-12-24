@@ -23,8 +23,8 @@
 extern "C" {
 #endif
 
-#include "freertos/FreeRTOS.h"
-#include "freertos/semphr.h"
+#include "FreeRTOS.h"
+#include "semphr.h"
 
 /**
  * @brief Mutex Type

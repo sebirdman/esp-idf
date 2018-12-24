@@ -15,9 +15,9 @@
 #include <math.h>
 #include <esp_types.h>
 
-#include "freertos/FreeRTOS.h"
-#include "freertos/queue.h"
-#include "freertos/xtensa_api.h"
+#include "FreeRTOS.h"
+#include "queue.h"
+#include "xtensa_api.h"
 
 #include "soc/dport_reg.h"
 #include "soc/rtc_cntl_reg.h"
@@ -63,7 +63,7 @@ typedef struct {
     int rw_pos;
     void *curr_ptr;
     SemaphoreHandle_t mux;
-    xQueueHandle queue;
+    QueueHandle_t queue;
     lldesc_t **desc;
 } i2s_dma_t;
 
@@ -316,10 +316,10 @@ esp_err_t i2s_set_clk(i2s_port_t i2s_num, uint32_t rate, i2s_bits_per_sample_t b
 
     // wait all on-going writing finish
     if ((p_i2s_obj[i2s_num]->mode & I2S_MODE_TX) && p_i2s_obj[i2s_num]->tx) {
-        xSemaphoreTake(p_i2s_obj[i2s_num]->tx->mux, (portTickType)portMAX_DELAY);
+        xSemaphoreTake(p_i2s_obj[i2s_num]->tx->mux, (TickType_t)portMAX_DELAY);
     }
     if ((p_i2s_obj[i2s_num]->mode & I2S_MODE_RX) && p_i2s_obj[i2s_num]->rx) {
-        xSemaphoreTake(p_i2s_obj[i2s_num]->rx->mux, (portTickType)portMAX_DELAY);
+        xSemaphoreTake(p_i2s_obj[i2s_num]->rx->mux, (TickType_t)portMAX_DELAY);
     }
 
     i2s_stop(i2s_num);
@@ -1147,7 +1147,7 @@ esp_err_t i2s_write(i2s_port_t i2s_num, const void *src, size_t size, size_t *by
     I2S_CHECK((i2s_num < I2S_NUM_MAX), "i2s_num error", ESP_ERR_INVALID_ARG);
     I2S_CHECK((size < I2S_MAX_BUFFER_SIZE), "size is too large", ESP_ERR_INVALID_ARG);
     I2S_CHECK((p_i2s_obj[i2s_num]->tx), "tx NULL", ESP_ERR_INVALID_ARG);
-    xSemaphoreTake(p_i2s_obj[i2s_num]->tx->mux, (portTickType)portMAX_DELAY);
+    xSemaphoreTake(p_i2s_obj[i2s_num]->tx->mux, (TickType_t)portMAX_DELAY);
     src_byte = (char *)src;
     while (size > 0) {
         if (p_i2s_obj[i2s_num]->tx->rw_pos == p_i2s_obj[i2s_num]->tx->buf_size || p_i2s_obj[i2s_num]->tx->curr_ptr == NULL) {
@@ -1225,7 +1225,7 @@ esp_err_t i2s_write_expand(i2s_port_t i2s_num, const void *src, size_t size, siz
     src_bytes = src_bits / 8;
     aim_bytes = aim_bits / 8;
     zero_bytes = aim_bytes - src_bytes;
-    xSemaphoreTake(p_i2s_obj[i2s_num]->tx->mux, (portTickType)portMAX_DELAY);
+    xSemaphoreTake(p_i2s_obj[i2s_num]->tx->mux, (TickType_t)portMAX_DELAY);
     size = size * aim_bytes / src_bytes;
     ESP_LOGD(I2S_TAG,"aim_bytes %d src_bytes %d size %d", aim_bytes, src_bytes, size);
     while (size > 0) {
@@ -1278,7 +1278,7 @@ esp_err_t i2s_read(i2s_port_t i2s_num, void *dest, size_t size, size_t *bytes_re
     I2S_CHECK((i2s_num < I2S_NUM_MAX), "i2s_num error", ESP_ERR_INVALID_ARG);
     I2S_CHECK((size < I2S_MAX_BUFFER_SIZE), "size is too large", ESP_ERR_INVALID_ARG);
     I2S_CHECK((p_i2s_obj[i2s_num]->rx), "rx NULL", ESP_ERR_INVALID_ARG);
-    xSemaphoreTake(p_i2s_obj[i2s_num]->rx->mux, (portTickType)portMAX_DELAY);
+    xSemaphoreTake(p_i2s_obj[i2s_num]->rx->mux, (TickType_t)portMAX_DELAY);
     while (size > 0) {
         if (p_i2s_obj[i2s_num]->rx->rw_pos == p_i2s_obj[i2s_num]->rx->buf_size || p_i2s_obj[i2s_num]->rx->curr_ptr == NULL) {
             if (xQueueReceive(p_i2s_obj[i2s_num]->rx->queue, &p_i2s_obj[i2s_num]->rx->curr_ptr, ticks_to_wait) == pdFALSE) {

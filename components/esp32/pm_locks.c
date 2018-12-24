@@ -18,7 +18,7 @@
 #include "esp_pm.h"
 #include "esp_system.h"
 #include "rom/queue.h"
-#include "freertos/FreeRTOS.h"
+#include "FreeRTOS.h"
 #include "pm_impl.h"
 #include "esp_timer.h"
 #include "sdkconfig.h"

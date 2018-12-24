@@ -8,9 +8,9 @@
 #include "mbedtls/sha1.h"
 #include "mbedtls/sha256.h"
 #include "mbedtls/sha512.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/semphr.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
 #include "unity.h"
 #include "sdkconfig.h"
 #include "test_apb_dport_access.h"
@@ -81,7 +81,7 @@ TEST_CASE("mbedtls SHA interleaving", "[mbedtls]")
     TEST_ASSERT_EQUAL_MEMORY_MESSAGE(sha1_thousand_as, sha1, 20, "SHA1 calculation");
 }
 
-static xSemaphoreHandle done_sem;
+static SemaphoreHandle_t done_sem;
 static void tskRunSHA1Test(void *pvParameters)
 {
     mbedtls_sha1_context sha1_ctx;

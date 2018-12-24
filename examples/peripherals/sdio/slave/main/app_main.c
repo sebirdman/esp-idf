@@ -12,8 +12,8 @@
 #include "rom/queue.h"
 #include "soc/soc.h"
 #include "soc/sdio_slave_periph.h"
-#include "freertos/task.h"
-#include "freertos/ringbuf.h"
+#include "task.h"
+#include "ringbuf.h"
 #include "sdkconfig.h"
 
 /*
@@ -114,7 +114,7 @@ static esp_err_t task_hostint()
         sdio_slave_send_host_int(i);
         //check reset for quick response to RESET signal
         if (s_job & JOB_RESET) break;
-        vTaskDelay(500/portTICK_RATE_MS);
+        vTaskDelay(500/portTICK_PERIOD_MS);
     }
     return ESP_OK;
 }

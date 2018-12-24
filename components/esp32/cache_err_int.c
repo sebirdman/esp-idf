@@ -23,7 +23,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include "freertos/FreeRTOS.h"
+#include "FreeRTOS.h"
 #include "esp_err.h"
 #include "esp_intr.h"
 #include "esp_attr.h"

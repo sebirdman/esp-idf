@@ -3,10 +3,10 @@
 #include "esp_types.h"
 #include "esp_clk.h"
 
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/semphr.h"
-#include "freertos/xtensa_timer.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
+#include "xtensa_timer.h"
 #include "soc/cpu.h"
 #include "unity.h"
 #include "test_utils.h"
@@ -22,7 +22,7 @@ static bool apb_test_result;
 
 static void accessDPORT(void *pvParameters)
 {
-    xSemaphoreHandle *sema = (xSemaphoreHandle *) pvParameters;
+    SemaphoreHandle_t *sema = (SemaphoreHandle_t *) pvParameters;
     uint32_t dport_date = DPORT_REG_READ(DPORT_DATE_REG);
 
     dport_test_result = true;
@@ -41,7 +41,7 @@ static void accessDPORT(void *pvParameters)
 
 static void accessAPB(void *pvParameters)
 {
-    xSemaphoreHandle *sema = (xSemaphoreHandle *) pvParameters;
+    SemaphoreHandle_t *sema = (SemaphoreHandle_t *) pvParameters;
     uint32_t uart_date = REG_READ(UART_DATE_REG(0));
 
     apb_test_result = true;
@@ -62,7 +62,7 @@ void run_tasks(const char *task1_description, void (* task1_func)(void *), const
 {
     int i;
     TaskHandle_t th[2];
-    xSemaphoreHandle exit_sema[2];
+    SemaphoreHandle_t exit_sema[2];
 
     for (i=0; i<2; i++) {
         if((task1_func != NULL && i == 0) || (task2_func != NULL && i == 1)){
@@ -156,7 +156,7 @@ static uint32_t apb_counter;
 
 static void accessDPORT_stall_other_cpu(void *pvParameters)
 {
-    xSemaphoreHandle *sema = (xSemaphoreHandle *) pvParameters;
+    SemaphoreHandle_t *sema = (SemaphoreHandle_t *) pvParameters;
     uint32_t dport_date = DPORT_REG_READ(DPORT_DATE_REG);
     uint32_t dport_date_cur;
     dport_test_result = true;
@@ -179,7 +179,7 @@ static void accessDPORT_stall_other_cpu(void *pvParameters)
 
 static void accessAPB_measure_performance(void *pvParameters)
 {
-    xSemaphoreHandle *sema = (xSemaphoreHandle *) pvParameters;
+    SemaphoreHandle_t *sema = (SemaphoreHandle_t *) pvParameters;
     uint32_t uart_date = REG_READ(UART_DATE_REG(0));
 
     apb_test_result = true;
@@ -199,7 +199,7 @@ static void accessAPB_measure_performance(void *pvParameters)
 
 static void accessDPORT_pre_reading_apb(void *pvParameters)
 {
-    xSemaphoreHandle *sema = (xSemaphoreHandle *) pvParameters;
+    SemaphoreHandle_t *sema = (SemaphoreHandle_t *) pvParameters;
     uint32_t dport_date = DPORT_REG_READ(DPORT_DATE_REG);
     uint32_t dport_date_cur;
     dport_test_result = true;

@@ -25,8 +25,8 @@
 #include "esp_system.h"
 #include "esp_vfs.h"
 #include "esp_vfs_fat.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
+#include "FreeRTOS.h"
+#include "task.h"
 #include "ff.h"
 #include "test_fatfs_common.h"
 

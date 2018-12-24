@@ -9,15 +9,15 @@
 #include <string.h>
 #include <string.h>
 
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/semphr.h"
-#include "freertos/queue.h"
-#include "freertos/xtensa_api.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
+#include "queue.h"
+#include "xtensa_api.h"
 #include "unity.h"
 #include "esp_heap_caps.h"
 #include "esp_log.h"
-#include "freertos/ringbuf.h"
+#include "ringbuf.h"
 #include "esp_system.h"
 #include "nvs_flash.h"
 

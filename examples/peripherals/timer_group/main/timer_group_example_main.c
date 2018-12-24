@@ -9,9 +9,9 @@
 
 #include <stdio.h>
 #include "esp_types.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/queue.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "queue.h"
 #include "soc/timer_group_struct.h"
 #include "driver/periph_ctrl.h"
 #include "driver/timer.h"
@@ -34,7 +34,7 @@ typedef struct {
     uint64_t timer_counter_value;
 } timer_event_t;
 
-xQueueHandle timer_queue;
+QueueHandle_t timer_queue;
 
 /*
  * A simple helper function to print the raw timer counter value

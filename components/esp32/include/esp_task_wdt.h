@@ -14,8 +14,8 @@
 
 #pragma once
 
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
+#include "FreeRTOS.h"
+#include "task.h"
 #include "esp_err.h"
 
 #ifdef __cplusplus

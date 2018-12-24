@@ -11,8 +11,8 @@
 #include "sdkconfig.h"
 #include "unity.h"
 
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
+#include "FreeRTOS.h"
+#include "task.h"
 
 #ifdef CONFIG_HEAP_TRACING
 // only compile in heap tracing tests if tracing is enabled

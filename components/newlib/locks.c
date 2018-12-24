@@ -17,16 +17,16 @@
 #include <sys/reent.h>
 #include "esp_attr.h"
 #include "soc/cpu.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/semphr.h"
-#include "freertos/portmacro.h"
-#include "freertos/task.h"
-#include "freertos/portable.h"
+#include "FreeRTOS.h"
+#include "semphr.h"
+#include "portmacro.h"
+#include "task.h"
+#include "portable.h"
 
 /* Notes on our newlib lock implementation:
  *
  * - Use FreeRTOS mutex semaphores as locks.
- * - lock_t is int, but we store an xSemaphoreHandle there.
+ * - lock_t is int, but we store an SemaphoreHandle_t there.
  * - Locks are no-ops until the FreeRTOS scheduler is running.
  * - Due to this, locks need to be lazily initialised the first time
  *   they are acquired. Initialisation/deinitialisation of locks is
@@ -76,7 +76,7 @@ static void IRAM_ATTR lock_init_generic(_lock_t *lock, uint8_t mutex_type) {
            without writing wrappers. Doing it this way seems much less
            spaghetti-like.
         */
-        xSemaphoreHandle new_sem = xQueueCreateMutex(mutex_type);
+        SemaphoreHandle_t new_sem = xQueueCreateMutex(mutex_type);
         if (!new_sem) {
             abort(); /* No more semaphores available or OOM */
         }
@@ -108,7 +108,7 @@ void IRAM_ATTR _lock_init_recursive(_lock_t *lock) {
 void IRAM_ATTR _lock_close(_lock_t *lock) {
     portENTER_CRITICAL(&lock_init_spinlock);
     if (*lock) {
-        xSemaphoreHandle h = (xSemaphoreHandle)(*lock);
+        SemaphoreHandle_t h = (SemaphoreHandle_t)(*lock);
 #if (INCLUDE_xSemaphoreGetMutexHolder == 1)
         configASSERT(xSemaphoreGetMutexHolder(h) == NULL); /* mutex should not be held */
 #endif
@@ -124,7 +124,7 @@ void _lock_close_recursive(_lock_t *lock) __attribute__((alias("_lock_close")));
    mutex_type is queueQUEUE_TYPE_RECURSIVE_MUTEX or queueQUEUE_TYPE_MUTEX
 */
 static int IRAM_ATTR lock_acquire_generic(_lock_t *lock, uint32_t delay, uint8_t mutex_type) {
-    xSemaphoreHandle h = (xSemaphoreHandle)(*lock);
+    SemaphoreHandle_t h = (SemaphoreHandle_t)(*lock);
     if (!h) {
         if (xTaskGetSchedulerState() == taskSCHEDULER_NOT_STARTED) {
             return 0; /* locking is a no-op before scheduler is up, so this "succeeds" */
@@ -132,7 +132,7 @@ static int IRAM_ATTR lock_acquire_generic(_lock_t *lock, uint32_t delay, uint8_t
         /* lazy initialise lock - might have had a static initializer in newlib (that we don't use),
            or _lock_init might have been called before the scheduler was running... */
         lock_init_generic(lock, mutex_type);
-        h = (xSemaphoreHandle)(*lock);
+        h = (SemaphoreHandle_t)(*lock);
         configASSERT(h != NULL);
     }
 
@@ -183,7 +183,7 @@ int IRAM_ATTR _lock_try_acquire_recursive(_lock_t *lock) {
    mutex_type is queueQUEUE_TYPE_RECURSIVE_MUTEX or queueQUEUE_TYPE_MUTEX
 */
 static void IRAM_ATTR lock_release_generic(_lock_t *lock, uint8_t mutex_type) {
-    xSemaphoreHandle h = (xSemaphoreHandle)(*lock);
+    SemaphoreHandle_t h = (SemaphoreHandle_t)(*lock);
     if (h == NULL) {
         /* This is probably because the scheduler isn't running yet,
            or the scheduler just started running and some code was

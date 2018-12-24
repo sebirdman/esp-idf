@@ -7,9 +7,9 @@
    CONDITIONS OF ANY KIND, either express or implied.
  */
 #include <string.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/event_groups.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "event_groups.h"
 #include "esp_system.h"
 #include "esp_wifi.h"
 #include "esp_event_loop.h"
@@ -231,7 +231,7 @@ static void pppos_client_task()
             int timeoutCnt = 0;
             while (1) {
                 memset(data, 0, BUF_SIZE);
-                int len = uart_read_bytes(uart_num, (uint8_t *)data, BUF_SIZE, 500 / portTICK_RATE_MS);
+                int len = uart_read_bytes(uart_num, (uint8_t *)data, BUF_SIZE, 500 / portTICK_PERIOD_MS);
                 if (len > 0) {
                     ESP_LOGI(TAG, "%s", data);
                 }
@@ -279,7 +279,7 @@ static void pppos_client_task()
 
         while (1) {
             memset(data, 0, BUF_SIZE);
-            int len = uart_read_bytes(uart_num, (uint8_t *)data, BUF_SIZE, 10 / portTICK_RATE_MS);
+            int len = uart_read_bytes(uart_num, (uint8_t *)data, BUF_SIZE, 10 / portTICK_PERIOD_MS);
             if (len > 0) {
                 ESP_LOGI(TAG, "PPP rx len %d", len);
                 pppos_input_tcpip(ppp, (u8_t *)data, len);

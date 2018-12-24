@@ -20,12 +20,12 @@
  * For more details please refer the the ESP-IDF FreeRTOS changes documentation
  */
 #include <stdio.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/timers.h"
-#include "freertos/queue.h"
-#include "freertos/semphr.h"
-#include "freertos/event_groups.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "timers.h"
+#include "queue.h"
+#include "semphr.h"
+#include "event_groups.h"
 #include "unity.h"
 #include "test_utils.h"
 

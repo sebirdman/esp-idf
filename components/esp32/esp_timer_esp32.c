@@ -23,9 +23,9 @@
 #include "esp_timer_impl.h"
 #include "soc/frc_timer_reg.h"
 #include "soc/rtc.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/semphr.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
 
 /**
  * @file esp_timer_esp32.c

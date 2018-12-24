@@ -14,8 +14,8 @@
    WPS_TYPE_PIN: Start esp32, You'll see PIN code which is a eight-digit number showing on COM. Enter the PIN code in router and then the esp32 will connected to router.
 */
 
-#include "freertos/FreeRTOS.h"
-#include "freertos/event_groups.h"
+#include "FreeRTOS.h"
+#include "event_groups.h"
 #include "esp_wifi.h"
 #include "esp_log.h"
 #include "esp_wps.h"

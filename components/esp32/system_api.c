@@ -32,9 +32,9 @@
 #include "soc/cpu.h"
 #include "soc/rtc.h"
 #include "soc/rtc_wdt.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/xtensa_api.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "xtensa_api.h"
 #include "esp_heap_caps.h"
 #include "esp_system_internal.h"
 

@@ -35,8 +35,8 @@
 #include "soc/rtc_wdt.h"
 #include "driver/rtc_io.h"
 #include "driver/uart.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
+#include "FreeRTOS.h"
+#include "task.h"
 #include "sdkconfig.h"
 
 // If light sleep time is less than that, don't power down flash

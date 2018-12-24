@@ -163,7 +163,7 @@
 #include "trax.h"
 #include "soc/timer_group_struct.h"
 #include "soc/timer_group_reg.h"
-#include "freertos/FreeRTOS.h"
+#include "FreeRTOS.h"
 #include "esp_app_trace.h"
 
 #if CONFIG_ESP32_APPTRACE_ENABLE

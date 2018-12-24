@@ -9,9 +9,9 @@
 #include "soc/io_mux_reg.h"
 #include "driver/rtc_io.h"
 #include "test_utils.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/semphr.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
 #include "../esp_clk_internal.h"
 #include "esp_clk.h"
 

@@ -22,8 +22,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
+#include "FreeRTOS.h"
+#include "task.h"
 #include "nvs.h"
 #include "nvs_flash.h"
 #include "esp_system.h"

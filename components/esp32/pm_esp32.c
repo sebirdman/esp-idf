@@ -26,9 +26,9 @@
 
 #include "soc/rtc.h"
 
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/xtensa_timer.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "xtensa_timer.h"
 #include "xtensa/core-macros.h"
 
 #include "pm_impl.h"

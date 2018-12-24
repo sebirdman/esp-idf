@@ -161,7 +161,7 @@ int sys_sem_signal_isr(sys_sem_t *sem)
 u32_t ESP_IRAM_ATTR
 sys_arch_sem_wait(sys_sem_t *sem, u32_t timeout)
 {
-  portTickType StartTime, EndTime, Elapsed;
+  TickType_t StartTime, EndTime, Elapsed;
   unsigned long ulReturn;
 
   StartTime = xTaskGetTickCount();
@@ -244,7 +244,7 @@ sys_mbox_trypost(sys_mbox_t *mbox, void *msg)
 {
   err_t xReturn;
 
-  if (xQueueSend((*mbox)->os_mbox, &msg, (portTickType)0) == pdPASS) {
+  if (xQueueSend((*mbox)->os_mbox, &msg, (TickType_t)0) == pdPASS) {
     xReturn = ERR_OK;
   } else {
     LWIP_DEBUGF(ESP_THREAD_SAFE_DEBUG, ("trypost mbox=%p fail\n", (*mbox)->os_mbox));
@@ -274,7 +274,7 @@ u32_t ESP_IRAM_ATTR
 sys_arch_mbox_fetch(sys_mbox_t *mbox, void **msg, u32_t timeout)
 {
   void *dummyptr;
-  portTickType StartTime, EndTime, Elapsed;
+  TickType_t StartTime, EndTime, Elapsed;
   unsigned long ulReturn;
 
   StartTime = xTaskGetTickCount();
@@ -408,7 +408,7 @@ sys_mbox_free(sys_mbox_t *mbox)
 sys_thread_t
 sys_thread_new(const char *name, lwip_thread_fn thread, void *arg, int stacksize, int prio)
 {
-  xTaskHandle created_task;
+  TaskHandle_t created_task;
   portBASE_TYPE result;
 
   result = xTaskCreatePinnedToCore(thread, name, stacksize, arg, prio, &created_task,

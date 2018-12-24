@@ -6,9 +6,9 @@
 #include "unity.h"
 #include "esp_timer.h"
 #include "esp_heap_caps.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/semphr.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
 #include "test_utils.h"
 #include "../esp_timer_impl.h"
 

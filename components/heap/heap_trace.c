@@ -21,8 +21,8 @@
 
 #include "esp_heap_caps.h"
 #include "esp_attr.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
+#include "FreeRTOS.h"
+#include "task.h"
 #include "soc/soc_memory_layout.h"
 
 #include "heap_private.h"

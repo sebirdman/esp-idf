@@ -18,8 +18,8 @@
 #include "eth_phy/phy_tlk110.h"
 #include "eth_phy/phy_reg.h"
 
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
+#include "FreeRTOS.h"
+#include "task.h"
 
 /* Value of MII_PHY_IDENTIFIER_REG for TI TLK110,
    Excluding bottom 4 bytes of ID2, used for model revision

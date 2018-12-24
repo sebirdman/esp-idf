@@ -16,8 +16,8 @@
 #include "esp_err.h"
 #include "esp_intr.h"
 #include "esp_intr_alloc.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/xtensa_api.h"
+#include "FreeRTOS.h"
+#include "xtensa_api.h"
 #include "driver/timer.h"
 #include "driver/periph_ctrl.h"
 

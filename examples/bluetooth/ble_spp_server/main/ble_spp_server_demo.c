@@ -7,9 +7,9 @@
 */
 
 
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/event_groups.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "event_groups.h"
 #include "esp_system.h"
 #include "esp_log.h"
 #include "nvs_flash.h"
@@ -53,10 +53,10 @@ static uint16_t spp_mtu_size = 23;
 static uint16_t spp_conn_id = 0xffff;
 static esp_gatt_if_t spp_gatts_if = 0xff;
 QueueHandle_t spp_uart_queue = NULL;
-static xQueueHandle cmd_cmd_queue = NULL;
+static QueueHandle_t cmd_cmd_queue = NULL;
 
 #ifdef SUPPORT_HEARTBEAT
-static xQueueHandle cmd_heartbeat_queue = NULL;
+static QueueHandle_t cmd_heartbeat_queue = NULL;
 static uint8_t  heartbeat_s[9] = {'E','s','p','r','e','s','s','i','f'};
 static bool enable_heart_ntf = false;
 static uint8_t heartbeat_count_num = 0;
@@ -315,7 +315,7 @@ void uart_task(void *pvParameters)
 
     for (;;) {
         //Waiting for UART event.
-        if (xQueueReceive(spp_uart_queue, (void * )&event, (portTickType)portMAX_DELAY)) {
+        if (xQueueReceive(spp_uart_queue, (void * )&event, (TickType_t)portMAX_DELAY)) {
             switch (event.type) {
             //Event of UART receving data
             case UART_DATA:

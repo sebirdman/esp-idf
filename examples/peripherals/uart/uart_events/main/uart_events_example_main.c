@@ -8,9 +8,9 @@
 */
 #include <stdio.h>
 #include <string.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/queue.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "queue.h"
 #include "driver/uart.h"
 #include "esp_log.h"
 
@@ -43,7 +43,7 @@ static void uart_event_task(void *pvParameters)
     uint8_t* dtmp = (uint8_t*) malloc(RD_BUF_SIZE);
     for(;;) {
         //Waiting for UART event.
-        if(xQueueReceive(uart0_queue, (void * )&event, (portTickType)portMAX_DELAY)) {
+        if(xQueueReceive(uart0_queue, (void * )&event, (TickType_t)portMAX_DELAY)) {
             bzero(dtmp, RD_BUF_SIZE);
             ESP_LOGI(TAG, "uart[%d] event:", EX_UART_NUM);
             switch(event.type) {

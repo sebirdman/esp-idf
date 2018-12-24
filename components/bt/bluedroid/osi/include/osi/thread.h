@@ -15,11 +15,11 @@
 #ifndef __THREAD_H__
 #define __THREAD_H__
 
-#include "freertos/xtensa_api.h"
-#include "freertos/FreeRTOSConfig.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/queue.h"
-#include "freertos/task.h"
+#include "xtensa_api.h"
+#include "FreeRTOSConfig.h"
+#include "FreeRTOS.h"
+#include "queue.h"
+#include "task.h"
 #include "esp_task.h"
 #include "common/bt_defs.h"
 

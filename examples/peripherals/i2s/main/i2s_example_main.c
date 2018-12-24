@@ -10,8 +10,8 @@
     CONDITIONS OF ANY KIND, either express or implied.
 */
 #include <stdio.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
+#include "FreeRTOS.h"
+#include "task.h"
 #include "driver/i2s.h"
 #include "esp_system.h"
 #include <math.h>
@@ -107,7 +107,7 @@ void app_main()
     int test_bits = 16;
     while (1) {
         setup_triangle_sine_waves(test_bits);
-        vTaskDelay(5000/portTICK_RATE_MS);
+        vTaskDelay(5000/portTICK_PERIOD_MS);
         test_bits += 8;
         if(test_bits > 32)
             test_bits = 16;

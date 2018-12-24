@@ -6,8 +6,8 @@
 #include <stdio.h>
 #include <strings.h>
 
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
+#include "FreeRTOS.h"
+#include "task.h"
 #include "unity.h"
 #include "test_utils.h"
 

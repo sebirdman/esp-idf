@@ -27,9 +27,9 @@
 #include <limits.h>
 #include <string.h>
 
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/event_groups.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "event_groups.h"
 #include "esp_system.h"
 #include "esp_wifi.h"
 #include "esp_event_loop.h"
@@ -317,7 +317,7 @@ void aws_iot_task(void *param) {
         ESP_LOGI(TAG, "*****************************************************************************************");
         ESP_LOGI(TAG, "Stack remaining for task '%s' is %d bytes", pcTaskGetTaskName(NULL), uxTaskGetStackHighWaterMark(NULL));
 
-        vTaskDelay(1000 / portTICK_RATE_MS);
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
 
     if(SUCCESS != rc) {

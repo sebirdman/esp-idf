@@ -18,11 +18,11 @@
 #include <string.h>
 #include <stdbool.h>
 #include "sdkconfig.h"
-#include "freertos/FreeRTOSConfig.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/queue.h"
-#include "freertos/semphr.h"
+#include "FreeRTOSConfig.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "queue.h"
+#include "semphr.h"
 #include <esp_types.h>
 #include "esp_err.h"
 #include "esp_intr.h"

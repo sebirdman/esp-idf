@@ -22,8 +22,8 @@
 #include <sys/lock.h>
 #include <sys/param.h>
 #include <dirent.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/semphr.h"
+#include "FreeRTOS.h"
+#include "semphr.h"
 #include "esp_vfs.h"
 #include "sdkconfig.h"
 

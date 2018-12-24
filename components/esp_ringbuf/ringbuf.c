@@ -14,9 +14,9 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/semphr.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
 #include "freertos/ringbuf.h"
 
 //32-bit alignment macros

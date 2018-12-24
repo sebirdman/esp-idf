@@ -61,7 +61,7 @@ File    : SEGGER_SYSVIEW_Config_FreeRTOS.c
 Purpose : Sample setup configuration of SystemView with FreeRTOS.
 Revision: $Rev: 3734 $
 */
-#include "freertos/FreeRTOS.h"
+#include "FreeRTOS.h"
 #include "SEGGER_SYSVIEW.h"
 #include "rom/ets_sys.h"
 #include "esp_app_trace.h"

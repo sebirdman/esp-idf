@@ -32,7 +32,7 @@
 #include "esp_bt_defs.h"
 #include "esp_ibeacon_api.h"
 #include "esp_log.h"
-#include "freertos/FreeRTOS.h"
+#include "FreeRTOS.h"
 
 static const char* DEMO_TAG = "IBEACON_DEMO";
 extern esp_ble_ibeacon_vendor_t vendor_config;

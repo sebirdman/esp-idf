@@ -4,9 +4,9 @@
 #include <string>
 #include "unity.h"
 #include "esp_log.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/semphr.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
 
 static const char* TAG = "cxx";
 

@@ -14,11 +14,11 @@
 #include <malloc.h>
 #include <string.h>
 #include "rom/ets_sys.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/semphr.h"
-#include "freertos/queue.h"
-#include "freertos/xtensa_api.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
+#include "queue.h"
+#include "xtensa_api.h"
 #include "unity.h"
 #include "soc/ledc_reg.h"
 #include "soc/ledc_struct.h"
@@ -57,7 +57,7 @@ static int16_t wave_count(int last_time)
     TEST_ESP_OK(pcnt_counter_resume(PCNT_UNIT_0));
     TEST_ESP_OK(pcnt_get_counter_value(PCNT_UNIT_0, &test_counter));
 
-    vTaskDelay(last_time / portTICK_RATE_MS);
+    vTaskDelay(last_time / portTICK_PERIOD_MS);
     TEST_ESP_OK(pcnt_get_counter_value(PCNT_UNIT_0, &test_counter));
     return test_counter;
 }
@@ -107,7 +107,7 @@ static void timer_duty_set_get(ledc_mode_t speed_mode, ledc_channel_t channel, u
 {
     TEST_ESP_OK(ledc_set_duty(speed_mode, channel, duty));
     TEST_ESP_OK(ledc_update_duty(speed_mode, channel));
-    vTaskDelay(1000 / portTICK_RATE_MS);
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
     TEST_ASSERT_EQUAL_INT32(ledc_get_duty(speed_mode, channel), duty);
 }
 
@@ -208,7 +208,7 @@ TEST_CASE("LEDC error log channel and timer config", "[ledc][test_env=UT_T1_LEDC
 
     uint32_t current_level = LEDC.channel_group[LEDC_HIGH_SPEED_MODE].channel[LEDC_CHANNEL_0].conf0.idle_lv;
     TEST_ESP_OK(ledc_stop(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, !current_level));
-    vTaskDelay(1000 / portTICK_RATE_MS);
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
     TEST_ASSERT_EQUAL_INT32( LEDC.channel_group[LEDC_HIGH_SPEED_MODE].channel[LEDC_CHANNEL_0].conf0.idle_lv, !current_level);
 }
 
@@ -321,12 +321,12 @@ TEST_CASE("LEDC timer set", "[ledc][test_env=UT_T1_LEDC]")
 
     printf("Bind channel 0 to timer 0\n");
     TEST_ESP_OK(ledc_bind_channel_timer(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, LEDC_TIMER_0));
-    vTaskDelay(1000 / portTICK_RATE_MS);
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
     TEST_ASSERT_EQUAL_INT32(ledc_get_freq(LEDC_HIGH_SPEED_MODE, LEDC_TIMER_0), 500);
 
     uint32_t current_level = LEDC.channel_group[LEDC_HIGH_SPEED_MODE].channel[LEDC_CHANNEL_0].conf0.idle_lv;
     TEST_ESP_OK(ledc_stop(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, !current_level));
-    vTaskDelay(1000 / portTICK_RATE_MS);
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
     TEST_ASSERT_EQUAL_INT32( LEDC.channel_group[LEDC_HIGH_SPEED_MODE].channel[LEDC_CHANNEL_0].conf0.idle_lv, !current_level);
 }
 
@@ -357,7 +357,7 @@ TEST_CASE("LEDC timer pause and resume", "[ledc][test_env=UT_T1_LEDC]")
     //pause ledc timer, when pause it, will get no waveform count
     printf("Pause ledc timer\n");
     TEST_ESP_OK(ledc_timer_pause(LEDC_HIGH_SPEED_MODE, LEDC_TIMER_0));
-    vTaskDelay(10 / portTICK_RATE_MS);
+    vTaskDelay(10 / portTICK_PERIOD_MS);
     count = wave_count(1000);
     TEST_ASSERT_INT16_WITHIN(5, count, 0);
     TEST_ASSERT_EQUAL_UINT32(count, 0);
@@ -365,14 +365,14 @@ TEST_CASE("LEDC timer pause and resume", "[ledc][test_env=UT_T1_LEDC]")
     //resume ledc timer
     printf("Resume ledc timer\n");
     TEST_ESP_OK(ledc_timer_resume(LEDC_HIGH_SPEED_MODE, LEDC_TIMER_0));
-    vTaskDelay(10 / portTICK_RATE_MS);
+    vTaskDelay(10 / portTICK_PERIOD_MS);
     count = wave_count(1000);
     TEST_ASSERT_UINT32_WITHIN(5, count, 5000);
 
     //reset ledc timer
     printf("reset ledc timer\n");
     TEST_ESP_OK(ledc_timer_rst(LEDC_HIGH_SPEED_MODE, LEDC_TIMER_0));
-    vTaskDelay(100 / portTICK_RATE_MS);
+    vTaskDelay(100 / portTICK_PERIOD_MS);
     TEST_ASSERT_UINT32_WITHIN(5, count, 5000);
 }
 
@@ -401,12 +401,12 @@ TEST_CASE("LEDC fade with time(logic analyzer)", "[ledc][ignore]")
 
     TEST_ESP_OK(ledc_set_fade_with_time(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, 4000, 1000));
     TEST_ESP_OK(ledc_fade_start(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, LEDC_FADE_WAIT_DONE));
-    vTaskDelay(1000 / portTICK_RATE_MS);
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
     TEST_ASSERT_EQUAL_INT32(ledc_get_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0), 4000);
 
     TEST_ESP_OK(ledc_set_fade_with_time(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, 0, 1000));
     TEST_ESP_OK(ledc_fade_start(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, LEDC_FADE_NO_WAIT));
-    vTaskDelay(1000 / portTICK_RATE_MS);
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
     TEST_ASSERT_EQUAL_INT32(ledc_get_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0), 0);
 
     //deinitial fade service
@@ -438,12 +438,12 @@ TEST_CASE("LEDC fade with step(logic analyzer)", "[ledc][ignore]")
 
     TEST_ESP_OK(ledc_set_fade_with_step(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, 4000, 2, 1));
     TEST_ESP_OK(ledc_fade_start(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, LEDC_FADE_WAIT_DONE));
-    vTaskDelay(1000 / portTICK_RATE_MS);
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
     TEST_ASSERT_EQUAL_INT32(ledc_get_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0), 4000);
 
     TEST_ESP_OK(ledc_set_fade_with_step(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, 0, 4, 2));
     TEST_ESP_OK(ledc_fade_start(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, LEDC_FADE_NO_WAIT));
-    vTaskDelay(1000 / portTICK_RATE_MS);
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
     TEST_ASSERT_EQUAL_INT32(ledc_get_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0), 0);
 
     //scaler=0 check

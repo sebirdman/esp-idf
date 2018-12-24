@@ -16,8 +16,8 @@
 #include <string.h>
 #include <ctype.h>
 #include <math.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
+#include "FreeRTOS.h"
+#include "task.h"
 #include "esp_log.h"
 #include "nmea_parser.h"
 

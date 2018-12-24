@@ -15,9 +15,9 @@
 
 #include <stdio.h>
 #include "string.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/queue.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "queue.h"
 #include "esp_attr.h"
 #include "soc/rtc.h"
 #include "driver/mcpwm.h"
@@ -58,7 +58,7 @@ typedef struct {
     mcpwm_capture_signal_t sel_cap_signal;
 } capture;
 
-xQueueHandle cap_queue;
+QueueHandle_t cap_queue;
 #if MCPWM_EN_CAPTURE
 static mcpwm_dev_t *MCPWM[2] = {&MCPWM0, &MCPWM1};
 #endif

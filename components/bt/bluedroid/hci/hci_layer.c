@@ -71,8 +71,8 @@ static bool interface_created;
 static hci_t interface;
 static hci_host_env_t hci_host_env;
 
-static xTaskHandle  xHciHostTaskHandle;
-static xQueueHandle xHciHostQueue;
+static TaskHandle_t  xHciHostTaskHandle;
+static QueueHandle_t xHciHostQueue;
 
 static bool hci_host_startup_flag;
 
@@ -222,7 +222,7 @@ static void hci_host_thread_handler(void *arg)
     BtTaskEvt_t e;
 
     for (;;) {
-        if (pdTRUE == xQueueReceive(xHciHostQueue, &e, (portTickType)portMAX_DELAY)) {
+        if (pdTRUE == xQueueReceive(xHciHostQueue, &e, (TickType_t)portMAX_DELAY)) {
 
             if (e.sig == SIG_HCI_HOST_SEND_AVAILABLE) {
                 if (esp_vhci_host_check_send_available()) {

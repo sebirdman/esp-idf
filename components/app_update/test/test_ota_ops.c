@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <freertos/FreeRTOS.h>
-#include <freertos/task.h>
-#include <freertos/semphr.h>
+#include <FreeRTOS.h>
+#include <task.h>
+#include <semphr.h>
 
 #include <unity.h>
 #include <test_utils.h>

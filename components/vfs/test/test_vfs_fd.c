@@ -17,9 +17,9 @@
 #include <unistd.h>
 #include <errno.h>
 #include <sys/fcntl.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/semphr.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
 #include "esp_vfs.h"
 #include "unity.h"
 #include "esp_log.h"

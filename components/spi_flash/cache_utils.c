@@ -17,9 +17,9 @@
 #include <string.h>
 #include <stdio.h>
 
-#include <freertos/FreeRTOS.h>
-#include <freertos/task.h>
-#include <freertos/semphr.h>
+#include <FreeRTOS.h>
+#include <task.h>
+#include <semphr.h>
 #include <rom/spi_flash.h>
 #include <rom/cache.h>
 #include <soc/soc.h>

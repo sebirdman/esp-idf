@@ -4,9 +4,9 @@
 #include <esp_types.h>
 #include "esp_intr.h"
 #include "esp_err.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/semphr.h"
-#include "freertos/xtensa_api.h"
+#include "FreeRTOS.h"
+#include "semphr.h"
+#include "xtensa_api.h"
 #include "soc/soc.h"
 #include "soc/pcnt_reg.h"
 #include "soc/pcnt_struct.h"

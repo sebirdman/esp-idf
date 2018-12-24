@@ -4,9 +4,9 @@
 #include <sys/time.h>
 #include "unity.h"
 #include "rom/ets_sys.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/semphr.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
 #include "esp_spi_flash.h"
 
 TEST_CASE("ets_timer produces correct delay", "[ets_timer]")

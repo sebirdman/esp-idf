@@ -40,7 +40,7 @@
 #include "rom/ets_sys.h"
 #include "driver/gpio.h"
 #include "esp_intr_alloc.h"
-#include "freertos/FreeRTOS.h"
+#include "FreeRTOS.h"
 #include "driver/periph_ctrl.h"
 
 /* Select which RMT and PCNT channels, and GPIO to use */

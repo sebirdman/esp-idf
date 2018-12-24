@@ -8,9 +8,9 @@
 */
 #include <stdio.h>
 #include <stdlib.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/queue.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "queue.h"
 #include "driver/gpio.h"
 #include "driver/adc.h"
 #include "driver/dac.h"

@@ -9,9 +9,9 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdint.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/queue.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "queue.h"
 #include "esp_system.h"
 #include "nvs_flash.h"
 #include "esp_heap_caps.h"

@@ -23,7 +23,7 @@
 #include "driver/sdmmc_host.h"
 #include "driver/periph_ctrl.h"
 #include "sdmmc_private.h"
-#include "freertos/semphr.h"
+#include "semphr.h"
 #include "soc/sdmmc_periph.h"
 
 #define SDMMC_EVENT_QUEUE_LENGTH 32

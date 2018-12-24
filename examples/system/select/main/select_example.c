@@ -12,8 +12,8 @@
 #include <sys/unistd.h>
 #include <sys/param.h>
 #include <sys/select.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
+#include "FreeRTOS.h"
+#include "task.h"
 #include "esp_log.h"
 #include "esp_vfs.h"
 #include "esp_vfs_dev.h"

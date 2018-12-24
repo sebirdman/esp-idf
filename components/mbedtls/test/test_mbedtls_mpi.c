@@ -5,9 +5,9 @@
 #include <stdbool.h>
 #include <esp_system.h>
 #include "mbedtls/bignum.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/semphr.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
 #include "unity.h"
 #include "sdkconfig.h"
 

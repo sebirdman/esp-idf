@@ -9,12 +9,12 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
+#include "FreeRTOS.h"
+#include "task.h"
 #include "esp_system.h"
 #include "nvs_flash.h"
 #include "driver/uart.h"
-#include "freertos/queue.h"
+#include "queue.h"
 #include "esp_log.h"
 #include "soc/uart_struct.h"
 
@@ -45,7 +45,7 @@
 #define BAUD_RATE       (115200)
 
 // Read packet timeout
-#define PACKET_READ_TICS        (100 / portTICK_RATE_MS)
+#define PACKET_READ_TICS        (100 / portTICK_PERIOD_MS)
 #define ECHO_TASK_STACK_SIZE    (2048)
 #define ECHO_TASK_PRIO          (10)
 #define ECHO_UART_PORT          (UART_NUM_2)

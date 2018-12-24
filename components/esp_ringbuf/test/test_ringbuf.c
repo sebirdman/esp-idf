@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/queue.h"
-#include "freertos/semphr.h"
-#include "freertos/ringbuf.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "queue.h"
+#include "semphr.h"
+#include "ringbuf.h"
 #include "driver/timer.h"
 #include "esp_spi_flash.h"
 #include "unity.h"

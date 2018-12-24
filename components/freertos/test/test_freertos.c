@@ -6,11 +6,11 @@
 #include <stdio.h>
 #include "rom/ets_sys.h"
 
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/semphr.h"
-#include "freertos/queue.h"
-#include "freertos/xtensa_api.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
+#include "queue.h"
+#include "xtensa_api.h"
 #include "unity.h"
 #include "soc/uart_reg.h"
 #include "soc/dport_reg.h"
@@ -19,8 +19,8 @@
 
 void ets_isr_unmask(uint32_t unmask);
 
-static xQueueHandle myQueue;
-static xQueueHandle uartRxQueue;
+static QueueHandle_t myQueue;
+static QueueHandle_t uartRxQueue;
 
 int ctr;
 
@@ -160,7 +160,7 @@ static void uartIsrHdl(void *arg)
     }
 }
 
-static void uartRxInit(xQueueHandle q)
+static void uartRxInit(QueueHandle_t q)
 {
     uint32_t reg_val;
 

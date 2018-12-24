@@ -19,10 +19,10 @@
 
 #include <sys/time.h>               // for calculation of time stamp in milliseconds
 #include "esp_log.h"                // for log_write
-#include "freertos/FreeRTOS.h"      // for task creation and queue access
-#include "freertos/task.h"          // for task api access
-#include "freertos/event_groups.h"  // for event groups
-#include "freertos/queue.h"         // for queue api access
+#include "FreeRTOS.h"      // for task creation and queue access
+#include "task.h"          // for task api access
+#include "event_groups.h"  // for event groups
+#include "queue.h"         // for queue api access
 #include "mb.h"                     // for mb types definition
 #include "mbutils.h"                // for mbutils functions definition for stack callback
 #include "sdkconfig.h"              // for KConfig values

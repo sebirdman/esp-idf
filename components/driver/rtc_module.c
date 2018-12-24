@@ -30,10 +30,10 @@
 #include "touch_pad.h"
 #include "adc.h"
 #include "dac.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/xtensa_api.h"
-#include "freertos/semphr.h"
-#include "freertos/timers.h"
+#include "FreeRTOS.h"
+#include "xtensa_api.h"
+#include "semphr.h"
+#include "timers.h"
 #include "esp_intr_alloc.h"
 #include "sys/lock.h"
 #include "driver/rtc_cntl.h"
@@ -830,7 +830,7 @@ esp_err_t touch_pad_config(touch_pad_t touch_num, uint16_t threshold)
         //If the FSM mode is 'TOUCH_FSM_MODE_TIMER', The data will be ready after one measurement cycle
         //after this function is executed, otherwise, the "touch_value" by "touch_pad_read" is 0.
         wait_time_ms = sleep_time/(rtc_clk/1000) + meas_cycle/(RTC_FAST_CLK_FREQ_APPROX/1000);
-        wait_tick = wait_time_ms/portTICK_RATE_MS;
+        wait_tick = wait_time_ms/portTICK_PERIOD_MS;
         vTaskDelay(wait_tick ? wait_tick : 1);
         s_touch_pad_init_bit |= (1 << touch_num);
     } else {

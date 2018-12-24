@@ -16,8 +16,8 @@
 
 
 #ifdef ESP_PLATFORM
-#include "freertos/FreeRTOS.h"
-#include "freertos/semphr.h"
+#include "FreeRTOS.h"
+#include "semphr.h"
 
 namespace nvs
 {

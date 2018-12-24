@@ -5,10 +5,10 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/semphr.h"
-#include "freertos/FreeRTOSConfig.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
+#include "FreeRTOSConfig.h"
 #include "unity.h"
 #include "test_utils.h"
 

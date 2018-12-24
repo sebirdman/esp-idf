@@ -17,8 +17,8 @@
 #define _DRIVER_SPI_MASTER_H_
 
 #include "esp_err.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/semphr.h"
+#include "FreeRTOS.h"
+#include "semphr.h"
 
 #include "driver/spi_common.h"
 

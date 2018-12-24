@@ -17,8 +17,8 @@
 #include "test_utils.h"
 #include "rom/ets_sys.h"
 #include "rom/uart.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
+#include "FreeRTOS.h"
+#include "task.h"
 #include "tcpip_adapter.h"
 #include "lwip/sockets.h"
 
@@ -63,7 +63,7 @@ void test_case_uses_tcpip()
     }
 
     // Allow LWIP tasks to finish initialising themselves
-    vTaskDelay(25 / portTICK_RATE_MS);
+    vTaskDelay(25 / portTICK_PERIOD_MS);
 
     printf("Note: tcpip_adapter_init() has been called. Until next reset, TCP/IP task will periodicially allocate memory and consume CPU time.\n");
 

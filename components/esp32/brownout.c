@@ -23,7 +23,7 @@
 #include "rom/ets_sys.h"
 #include "esp_system_internal.h"
 #include "driver/rtc_cntl.h"
-#include "freertos/FreeRTOS.h"
+#include "FreeRTOS.h"
 
 #ifdef CONFIG_BROWNOUT_DET_LVL
 #define BROWNOUT_DET_LVL CONFIG_BROWNOUT_DET_LVL

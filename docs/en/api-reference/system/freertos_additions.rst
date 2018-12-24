@@ -58,7 +58,7 @@ and :cpp:func:`xRingbufferSend` to create a ring buffer then send an item to it.
 
 .. code-block:: c
 
-    #include "freertos/ringbuf.h"
+    #include "ringbuf.h"
     static char tx_item[] = "test_item";
 
     ...
@@ -291,8 +291,8 @@ The following example demonstrates queue set usage with ring buffers.
 
 .. code-block:: c
 
-    #include "freertos/queue.h"
-    #include "freertos/ringbuf.h"
+    #include "queue.h"
+    #include "ringbuf.h"
 
     ...
 

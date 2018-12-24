@@ -10,7 +10,7 @@
 #include "esp_log.h"
 #include "nvs_flash.h"
 #include "test_utils.h"
-#include "freertos/task.h"
+#include "task.h"
 
 static const char* TAG = "test_wifi";
 

@@ -4,9 +4,9 @@
 #include "esp_event.h"
 #include "sdkconfig.h"
 
-#include "freertos/FreeRTOS.h"
+#include "FreeRTOS.h"
 #include "esp_event_loop.h"
-#include "freertos/task.h"
+#include "task.h"
 #include "esp_log.h"
 
 #include "esp_event.h"

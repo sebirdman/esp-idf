@@ -63,8 +63,8 @@ static const hci_hal_t interface;
 static const hci_hal_callbacks_t *callbacks;
 static const esp_vhci_host_callback_t vhci_host_cb;
 
-static xTaskHandle xHciH4TaskHandle;
-static xQueueHandle xHciH4Queue;
+static TaskHandle_t xHciH4TaskHandle;
+static QueueHandle_t xHciH4Queue;
 
 static void host_send_pkt_available_cb(void);
 static int host_recv_pkt_cb(uint8_t *data, uint16_t len);
@@ -167,7 +167,7 @@ static void hci_hal_h4_rx_handler(void *arg)
     BtTaskEvt_t e;
 
     for (;;) {
-        if (pdTRUE == xQueueReceive(xHciH4Queue, &e, (portTickType)portMAX_DELAY)) {
+        if (pdTRUE == xQueueReceive(xHciH4Queue, &e, (TickType_t)portMAX_DELAY)) {
             if (e.sig == SIG_HCI_HAL_RECV_PACKET) {
                 fixed_queue_process(hci_hal_env.rx_q);
 

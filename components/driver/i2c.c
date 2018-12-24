@@ -18,10 +18,10 @@
 #include "esp_intr.h"
 #include "esp_log.h"
 #include "malloc.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/semphr.h"
-#include "freertos/xtensa_api.h"
-#include "freertos/task.h"
+#include "FreeRTOS.h"
+#include "semphr.h"
+#include "xtensa_api.h"
+#include "task.h"
 #include "freertos/ringbuf.h"
 #include "soc/dport_reg.h"
 #include "soc/i2c_struct.h"
@@ -133,12 +133,12 @@ typedef struct {
     int intr_alloc_flags;            /*!< Used to allocate the interrupt */
     StaticQueue_t evt_queue_buffer;  /*!< The buffer that will hold the queue structure*/
 #endif
-    xSemaphoreHandle cmd_mux;        /*!< semaphore to lock command process */
+    SemaphoreHandle_t cmd_mux;        /*!< semaphore to lock command process */
     size_t tx_fifo_remain;           /*!< tx fifo remain length, for master mode */
     size_t rx_fifo_remain;           /*!< rx fifo remain length, for master mode */
 
-    xSemaphoreHandle slv_rx_mux;     /*!< slave rx buffer mux */
-    xSemaphoreHandle slv_tx_mux;     /*!< slave tx buffer mux */
+    SemaphoreHandle_t slv_rx_mux;     /*!< slave rx buffer mux */
+    SemaphoreHandle_t slv_tx_mux;     /*!< slave tx buffer mux */
     size_t rx_buf_length;            /*!< rx buffer length */
     RingbufHandle_t rx_ring_buf;     /*!< rx ringbuffer handler of slave mode */
     size_t tx_buf_length;            /*!< tx buffer length */
@@ -1259,7 +1259,7 @@ esp_err_t i2c_master_cmd_begin(i2c_port_t i2c_num, i2c_cmd_handle_t cmd_handle, 
     static uint8_t clear_bus_cnt = 0;
     esp_err_t ret = ESP_FAIL;
     i2c_obj_t* p_i2c = p_i2c_obj[i2c_num];
-    portTickType ticks_start = xTaskGetTickCount();
+    TickType_t ticks_start = xTaskGetTickCount();
     portBASE_TYPE res = xSemaphoreTake(p_i2c->cmd_mux, ticks_to_wait);
     if (res == pdFALSE) {
         return ESP_ERR_TIMEOUT;
@@ -1351,7 +1351,7 @@ int i2c_slave_write_buffer(i2c_port_t i2c_num, uint8_t* data, int size, TickType
 
     portBASE_TYPE res;
     int cnt = 0;
-    portTickType ticks_end = xTaskGetTickCount() + ticks_to_wait;
+    TickType_t ticks_end = xTaskGetTickCount() + ticks_to_wait;
 
     res = xSemaphoreTake(p_i2c->slv_tx_mux, ticks_to_wait);
     if (res == pdFALSE) {
@@ -1392,7 +1392,7 @@ int i2c_slave_read_buffer(i2c_port_t i2c_num, uint8_t* data, size_t max_size, Ti
 
     i2c_obj_t* p_i2c = p_i2c_obj[i2c_num];
     portBASE_TYPE res;
-    portTickType ticks_end = xTaskGetTickCount() + ticks_to_wait;
+    TickType_t ticks_end = xTaskGetTickCount() + ticks_to_wait;
     res = xSemaphoreTake(p_i2c->slv_rx_mux, ticks_to_wait);
     if (res == pdFALSE) {
         return 0;

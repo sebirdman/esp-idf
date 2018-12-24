@@ -107,8 +107,8 @@ extern osi_mutex_t btu_oneshot_alarm_lock;
 extern hash_map_t *btu_l2cap_alarm_hash_map;
 extern osi_mutex_t btu_l2cap_alarm_lock;
 
-extern xTaskHandle  xBtuTaskHandle;
-extern xQueueHandle xBtuQueue;
+extern TaskHandle_t  xBtuTaskHandle;
+extern QueueHandle_t xBtuQueue;
 extern bluedroid_init_done_cb_t bluedroid_init_done_cb;
 
 /* Define a function prototype to allow a generic timeout handler */
@@ -219,7 +219,7 @@ void btu_task_thread_handler(void *arg)
     BtTaskEvt_t e;
 
     for (;;) {
-        if (pdTRUE == xQueueReceive(xBtuQueue, &e, (portTickType)portMAX_DELAY)) {
+        if (pdTRUE == xQueueReceive(xBtuQueue, &e, (TickType_t)portMAX_DELAY)) {
 
             switch (e.sig) {
             case SIG_BTU_START_UP:

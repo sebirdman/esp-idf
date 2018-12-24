@@ -22,7 +22,7 @@
 #include "osi/allocator.h"
 #include "esp_spp_api.h"
 #include "osi/list.h"
-#include "freertos/ringbuf.h"
+#include "ringbuf.h"
 #include "osi/mutex.h"
 #include <sys/errno.h>
 #include <sys/lock.h>

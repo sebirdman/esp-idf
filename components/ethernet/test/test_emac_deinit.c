@@ -10,9 +10,9 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/event_groups.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "event_groups.h"
 #include "esp_system.h"
 #include "esp_err.h"
 #include "esp_event_loop.h"
@@ -126,7 +126,7 @@ TEST_CASE("test emac deinit", "[ethernet][ignore]")
     ESP_ERROR_CHECK(esp_eth_enable());
 
     xEventGroupWaitBits(eth_event_group, GOTIP_BIT, true, true, portMAX_DELAY);
-    vTaskDelay(15000 / portTICK_RATE_MS);
+    vTaskDelay(15000 / portTICK_PERIOD_MS);
 
     ESP_ERROR_CHECK(esp_eth_disable());
     ESP_ERROR_CHECK(esp_eth_deinit());

@@ -90,11 +90,11 @@ The driver of FIFOs works as below:
 #include "rom/lldesc.h"
 #include "esp_log.h"
 #include "esp_intr_alloc.h"
-#include "freertos/FreeRTOS.h"
+#include "FreeRTOS.h"
 #include "soc/dport_access.h"
 #include "soc/dport_reg.h"
 #include "soc/io_mux_reg.h"
-#include "freertos/semphr.h"
+#include "semphr.h"
 #include "xtensa/core-macros.h"
 #include "driver/periph_ctrl.h"
 

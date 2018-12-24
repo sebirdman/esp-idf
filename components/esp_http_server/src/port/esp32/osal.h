@@ -15,8 +15,8 @@
 #ifndef _OSAL_H_
 #define _OSAL_H_
 
-#include <freertos/FreeRTOS.h>
-#include <freertos/task.h>
+#include <FreeRTOS.h>
+#include <task.h>
 #include <unistd.h>
 #include <stdint.h>
 #include <esp_timer.h>
@@ -49,7 +49,7 @@ static inline void httpd_os_thread_delete()
 
 static inline void httpd_os_thread_sleep(int msecs)
 {
-    vTaskDelay(msecs / portTICK_RATE_MS);
+    vTaskDelay(msecs / portTICK_PERIOD_MS);
 }
 
 static inline int64_t httpd_os_get_timestamp()

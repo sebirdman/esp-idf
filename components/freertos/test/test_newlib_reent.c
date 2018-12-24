@@ -7,11 +7,11 @@
 #include <stdlib.h>
 #include "rom/ets_sys.h"
 
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/semphr.h"
-#include "freertos/queue.h"
-#include "freertos/xtensa_api.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
+#include "queue.h"
+#include "xtensa_api.h"
 #include "unity.h"
 #include "soc/uart_reg.h"
 #include "soc/dport_reg.h"

@@ -1,11 +1,11 @@
 /* Tests for FreeRTOS scheduler suspend & resume all tasks */
 #include <stdio.h>
 
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/semphr.h"
-#include "freertos/queue.h"
-#include "freertos/xtensa_api.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
+#include "queue.h"
+#include "xtensa_api.h"
 #include "unity.h"
 #include "soc/cpu.h"
 #include "test_utils.h"

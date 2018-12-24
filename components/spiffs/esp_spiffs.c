@@ -19,9 +19,9 @@
 #include "esp_partition.h"
 #include "esp_spi_flash.h"
 #include "esp_image_format.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/semphr.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
 #include <unistd.h>
 #include <dirent.h>
 #include <sys/errno.h>

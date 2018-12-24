@@ -21,8 +21,8 @@
     can be sorted based on Authentication Mode or Signal Strength. The priority
     for the Authentication mode is:  WPA2 > WPA > WEP > Open
 */
-#include "freertos/FreeRTOS.h"
-#include "freertos/event_groups.h"
+#include "FreeRTOS.h"
+#include "event_groups.h"
 #include "esp_wifi.h"
 #include "esp_log.h"
 #include "esp_event_loop.h"

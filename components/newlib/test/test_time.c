@@ -5,9 +5,9 @@
 #include <time.h>
 #include <sys/time.h>
 #include "soc/rtc_cntl_reg.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/semphr.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
 #include "sdkconfig.h"
 #include "soc/rtc.h"
 #include "esp_clk.h"
@@ -50,7 +50,7 @@ TEST_CASE("Reading RTC registers on APP CPU doesn't affect clock", "[newlib]")
         printf("(0) time taken: %f sec\n", time_sec);
         TEST_ASSERT_TRUE(fabs(time_sec - 1.0f) < 0.1);
     }
-    TEST_ASSERT_TRUE(xSemaphoreTake(done, 5000 / portTICK_RATE_MS));
+    TEST_ASSERT_TRUE(xSemaphoreTake(done, 5000 / portTICK_PERIOD_MS));
 }
 
 #endif // portNUM_PROCESSORS == 2
@@ -137,7 +137,7 @@ static volatile bool exit_flag;
 
 static void adjtimeTask2(void *pvParameters)
 {
-    xSemaphoreHandle *sema = (xSemaphoreHandle *) pvParameters;
+    SemaphoreHandle_t *sema = (SemaphoreHandle_t *) pvParameters;
     struct timeval delta = {.tv_sec = 0, .tv_usec = 0};
     struct timeval outdelta;
 
@@ -154,7 +154,7 @@ static void adjtimeTask2(void *pvParameters)
 
 static void timeTask(void *pvParameters)
 {
-    xSemaphoreHandle *sema = (xSemaphoreHandle *) pvParameters;
+    SemaphoreHandle_t *sema = (SemaphoreHandle_t *) pvParameters;
     struct timeval tv_time = { .tv_sec = 1520000000, .tv_usec = 900000 };
 
     // although exit flag is set in another task, checking (exit_flag == false) is safe
@@ -175,7 +175,7 @@ TEST_CASE("test for no interlocking adjtime, gettimeofday and settimeofday funct
     TEST_ASSERT_EQUAL(settimeofday(&tv_time, NULL), 0);
 
     const int max_tasks = 2;
-    xSemaphoreHandle exit_sema[max_tasks];
+    SemaphoreHandle_t exit_sema[max_tasks];
 
     for (int i = 0; i < max_tasks; ++i) {
         exit_sema[i] = xSemaphoreCreateBinary();
@@ -205,8 +205,8 @@ TEST_CASE("test for no interlocking adjtime, gettimeofday and settimeofday funct
 }
 
 #ifndef CONFIG_FREERTOS_UNICORE
-static xSemaphoreHandle gettime_start_sema;
-static xSemaphoreHandle adjtime_continue_sema;
+static SemaphoreHandle_t gettime_start_sema;
+static SemaphoreHandle_t adjtime_continue_sema;
 static void adjtimeTask(void *pvParameters)
 {
     const uint64_t adjtime_us = 2000000000; // 2000 sec

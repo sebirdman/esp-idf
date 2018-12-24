@@ -26,8 +26,8 @@ extern "C" {
 #include <limits.h>
 
 #include "timer_platform.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
+#include "FreeRTOS.h"
+#include "task.h"
 #include "esp_log.h"
 
 const static char *TAG = "aws_timer";

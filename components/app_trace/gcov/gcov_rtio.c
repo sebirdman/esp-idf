@@ -15,8 +15,8 @@
 // This module implements runtime file I/O API for GCOV.
 
 #include "esp_task_wdt.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
+#include "FreeRTOS.h"
+#include "task.h"
 #include "soc/cpu.h"
 #include "soc/timer_group_struct.h"
 #include "soc/timer_group_reg.h"

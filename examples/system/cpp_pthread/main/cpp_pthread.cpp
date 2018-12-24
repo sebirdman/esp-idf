@@ -14,8 +14,8 @@
 #include <string>
 #include <sstream>
 #include <esp_pthread.h>
-#include <freertos/FreeRTOS.h>
-#include <freertos/task.h>
+#include <FreeRTOS.h>
+#include <task.h>
 #include <esp_log.h>
 
 using namespace std::chrono;

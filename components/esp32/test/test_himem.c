@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdint.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
+#include "FreeRTOS.h"
+#include "task.h"
 #include "esp_system.h"
 #include "rom/cache.h"
 #include "sdkconfig.h"

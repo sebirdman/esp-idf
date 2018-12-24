@@ -15,7 +15,7 @@
 
 #include <stdlib.h>
 #include <stdint.h>
-#include <freertos/FreeRTOS.h>
+#include <FreeRTOS.h>
 #include <soc/soc_memory_layout.h>
 #include "multi_heap.h"
 #include "rom/queue.h"

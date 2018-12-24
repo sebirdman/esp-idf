@@ -2,8 +2,8 @@
 #include <sstream>
 #include <thread>
 #include <mutex>
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
+#include "FreeRTOS.h"
+#include "task.h"
 #include "unity.h"
 
 #if __GTHREADS && __GTHREADS_CXX0X

@@ -18,9 +18,9 @@
 #include "rom/rtc.h"
 #include "rom/uart.h"
 
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/xtensa_api.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "xtensa_api.h"
 
 #include "soc/uart_reg.h"
 #include "soc/io_mux_reg.h"

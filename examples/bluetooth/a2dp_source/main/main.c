@@ -10,9 +10,9 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/timers.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "timers.h"
 #include "nvs.h"
 #include "nvs_flash.h"
 #include "esp_system.h"
@@ -338,7 +338,7 @@ static void bt_av_hdl_stack_evt(uint16_t event, void *p_param)
         /* create and start heart beat timer */
         do {
             int tmr_id = 0;
-            s_tmr = xTimerCreate("connTmr", (10000 / portTICK_RATE_MS),
+            s_tmr = xTimerCreate("connTmr", (10000 / portTICK_PERIOD_MS),
                                pdTRUE, (void *)tmr_id, a2d_app_heart_beat);
             xTimerStart(s_tmr, portMAX_DELAY);
         } while (0);

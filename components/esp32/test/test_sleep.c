@@ -8,9 +8,9 @@
 #include "soc/rtc.h"
 #include "soc/uart_reg.h"
 #include "rom/uart.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/semphr.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
 #include "soc/rtc.h"            // for wakeup trigger defines
 #include "soc/rtc_cntl_reg.h"   // for read rtc registers directly (cause)
 #include "soc/soc.h"            // for direct register read macros
@@ -425,7 +425,7 @@ static void trigger_deepsleep(void)
     esp_set_time_from_rtc();
 
     // Delay for time error accumulation.
-    vTaskDelay(10000/portTICK_RATE_MS);
+    vTaskDelay(10000/portTICK_PERIOD_MS);
 
     // Save start time. Deep sleep.
     gettimeofday(&start, NULL);

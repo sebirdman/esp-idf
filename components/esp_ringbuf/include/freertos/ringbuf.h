@@ -23,7 +23,7 @@
 extern "C" {
 #endif
 
-#include <freertos/queue.h>
+#include <queue.h>
 
 /**
  * Type by which ring buffers are referenced. For example, a call to xRingbufferCreate()

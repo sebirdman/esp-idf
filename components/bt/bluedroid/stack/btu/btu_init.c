@@ -58,8 +58,8 @@ static const size_t BTU_L2CAP_ALARM_HASH_MAP_SIZE = 34;
 
 //thread_t *bt_workqueue_thread;
 //static const char *BT_WORKQUEUE_NAME = "bt_workqueue";
-xTaskHandle  xBtuTaskHandle = NULL;
-xQueueHandle xBtuQueue = 0;
+TaskHandle_t  xBtuTaskHandle = NULL;
+QueueHandle_t xBtuQueue = 0;
 
 extern void PLATFORM_DisableHciTransport(UINT8 bDisable);
 

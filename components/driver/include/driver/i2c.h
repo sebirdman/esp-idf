@@ -22,11 +22,11 @@ extern "C" {
 #include <esp_types.h>
 #include "esp_err.h"
 #include "esp_intr_alloc.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/semphr.h"
-#include "freertos/xtensa_api.h"
-#include "freertos/task.h"
-#include "freertos/queue.h"
+#include "FreeRTOS.h"
+#include "semphr.h"
+#include "xtensa_api.h"
+#include "task.h"
+#include "queue.h"
 #include "freertos/ringbuf.h"
 #include "driver/gpio.h"
 

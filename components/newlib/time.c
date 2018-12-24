@@ -32,9 +32,9 @@
 #include "soc/rtc_cntl_reg.h"
 #include "soc/frc_timer_reg.h"
 #include "rom/ets_sys.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/xtensa_api.h"
-#include "freertos/task.h"
+#include "FreeRTOS.h"
+#include "xtensa_api.h"
+#include "task.h"
 #include "sdkconfig.h"
 #include "limits.h"
 

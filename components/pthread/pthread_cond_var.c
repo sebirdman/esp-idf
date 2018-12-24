@@ -22,10 +22,10 @@
 #include <string.h>
 #include "esp_err.h"
 #include "esp_attr.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/semphr.h"
-#include "freertos/list.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
+#include "list.h"
 
 #include <rom/queue.h>
 #include <sys/time.h>

@@ -16,8 +16,8 @@
 #include <string.h>
 #include "esp_err.h"
 #include "esp_log.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
+#include "FreeRTOS.h"
+#include "task.h"
 #include "sys/lock.h"
 #include "rom/queue.h"
 

@@ -20,9 +20,9 @@
 #include "esp_ipc.h"
 #include "esp_attr.h"
 
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/semphr.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
 
 
 static SemaphoreHandle_t s_ipc_mutex;                        // This mutex is used as a global lock for esp_ipc_* APIs

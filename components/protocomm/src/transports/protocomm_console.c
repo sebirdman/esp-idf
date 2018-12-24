@@ -16,9 +16,9 @@
 #include <string.h>
 #include <esp_log.h>
 #include <esp_console.h>
-#include <freertos/FreeRTOS.h>
-#include <freertos/task.h>
-#include <freertos/queue.h>
+#include <FreeRTOS.h>
+#include <task.h>
+#include <queue.h>
 #include <driver/uart.h>
 
 #include <protocomm.h>
@@ -63,7 +63,7 @@ static ssize_t hex2bin(const char *hexstr, uint8_t *bytes)
 static bool stopped(void)
 {
     uint32_t flag = 0;
-    xTaskNotifyWait(0, 0, &flag, (TickType_t) 10/portTICK_RATE_MS);
+    xTaskNotifyWait(0, 0, &flag, (TickType_t) 10/portTICK_PERIOD_MS);
     return (flag != 0);
 }
 
@@ -92,7 +92,7 @@ static void protocomm_console_task(void *arg)
         memset(linebuf, 0, sizeof(linebuf));
         i = 0;
         do {
-            ret = xQueueReceive(uart_queue, (void * )&event, (TickType_t) 10/portTICK_RATE_MS);
+            ret = xQueueReceive(uart_queue, (void * )&event, (TickType_t) 10/portTICK_PERIOD_MS);
             if (ret != pdPASS) {
                 if (stopped()) {
                     break;

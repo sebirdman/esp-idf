@@ -20,7 +20,7 @@
 #include <sys/reent.h>
 #include <stdlib.h>
 #include "esp_attr.h"
-#include "freertos/FreeRTOS.h"
+#include "FreeRTOS.h"
 #include "esp_heap_caps.h"
 
 

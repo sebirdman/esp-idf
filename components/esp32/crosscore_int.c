@@ -27,11 +27,11 @@
 #include "soc/io_mux_reg.h"
 #include "soc/rtc_cntl_reg.h"
 
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/semphr.h"
-#include "freertos/queue.h"
-#include "freertos/portmacro.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
+#include "queue.h"
+#include "portmacro.h"
 
 
 #define REASON_YIELD            BIT(0)

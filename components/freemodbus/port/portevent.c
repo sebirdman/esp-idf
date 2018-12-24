@@ -29,9 +29,9 @@
  */
 
 /* ----------------------- System includes ----------------------------------*/
-#include <freertos/FreeRTOS.h>
-#include <freertos/task.h>
-#include <freertos/queue.h>
+#include <FreeRTOS.h>
+#include <task.h>
+#include <queue.h>
 
 /* ----------------------- Modbus includes ----------------------------------*/
 #include "mb.h"
@@ -39,7 +39,7 @@
 #include "port.h"
 #include "sdkconfig.h"
 /* ----------------------- Variables ----------------------------------------*/
-static xQueueHandle xQueueHdl;
+static QueueHandle_t xQueueHdl;
 
 #define MB_EVENT_QUEUE_SIZE     (1)
 #define MB_EVENT_QUEUE_TIMEOUT  (pdMS_TO_TICKS(CONFIG_MB_EVENT_QUEUE_TIMEOUT))
@@ -98,7 +98,7 @@ xMBPortEventGet(eMBEventType * peEvent)
     return xEventHappened;
 }
 
-xQueueHandle
+QueueHandle_t
 xMBPortEventGetHandle(void)
 {
     if(xQueueHdl != NULL) //

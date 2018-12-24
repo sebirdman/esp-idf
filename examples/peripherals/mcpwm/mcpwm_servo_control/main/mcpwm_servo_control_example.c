@@ -8,8 +8,8 @@
 */
 #include <stdio.h>
 
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
+#include "FreeRTOS.h"
+#include "task.h"
 #include "esp_attr.h"
 
 #include "driver/mcpwm.h"

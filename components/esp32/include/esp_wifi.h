@@ -59,8 +59,8 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/queue.h"
+#include "FreeRTOS.h"
+#include "queue.h"
 #include "rom/queue.h"
 #include "sdkconfig.h"
 #include "esp_err.h"

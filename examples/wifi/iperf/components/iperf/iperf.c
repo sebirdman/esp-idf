@@ -10,8 +10,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <sys/socket.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
+#include "FreeRTOS.h"
+#include "task.h"
 #include "esp_log.h"
 #include "iperf.h"
 

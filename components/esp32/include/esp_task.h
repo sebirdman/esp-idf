@@ -27,7 +27,7 @@
 #define _ESP_TASK_H_
 
 #include "sdkconfig.h"
-#include "freertos/FreeRTOSConfig.h"
+#include "FreeRTOSConfig.h"
 
 #define ESP_TASK_PRIO_MAX (configMAX_PRIORITIES)
 #define ESP_TASK_PRIO_MIN (0)

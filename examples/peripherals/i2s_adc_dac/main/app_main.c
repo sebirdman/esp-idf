@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
+#include "FreeRTOS.h"
+#include "task.h"
 #include "esp_spi_flash.h"
 #include "esp_err.h"
 #include "esp_log.h"
@@ -275,7 +275,7 @@ void adc_read_task(void* arg)
         uint32_t voltage;
         esp_adc_cal_get_voltage(ADC1_TEST_CHANNEL, &characteristics, &voltage);
         ESP_LOGI(TAG, "%d mV", voltage);
-        vTaskDelay(200 / portTICK_RATE_MS);
+        vTaskDelay(200 / portTICK_PERIOD_MS);
     }
 }
 

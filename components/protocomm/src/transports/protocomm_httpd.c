@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <freertos/FreeRTOS.h>
-#include <freertos/task.h>
+#include <FreeRTOS.h>
+#include <task.h>
 #include <esp_log.h>
 #include <esp_err.h>
 

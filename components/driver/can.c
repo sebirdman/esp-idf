@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "freertos/FreeRTOS.h"
-#include "freertos/portmacro.h"
-#include "freertos/task.h"
-#include "freertos/queue.h"
-#include "freertos/semphr.h"
+#include "FreeRTOS.h"
+#include "portmacro.h"
+#include "task.h"
+#include "queue.h"
+#include "semphr.h"
 #include "esp_types.h"
 #include "esp_log.h"
 #include "esp_intr_alloc.h"

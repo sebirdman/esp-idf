@@ -21,8 +21,8 @@
 #include "esp_a2dp_api.h"
 #include "esp_avrc_api.h"
 
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
+#include "FreeRTOS.h"
+#include "task.h"
 #include "driver/i2s.h"
 
 /* a2dp event handler */

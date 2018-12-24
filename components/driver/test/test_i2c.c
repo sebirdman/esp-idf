@@ -58,7 +58,7 @@ static esp_err_t i2c_master_write_slave(i2c_port_t i2c_num, uint8_t *data_wr, si
     TEST_ESP_OK(i2c_master_write_byte(cmd, ( ESP_SLAVE_ADDR << 1 ) | WRITE_BIT, ACK_CHECK_EN));
     TEST_ESP_OK(i2c_master_write(cmd, data_wr, size, ACK_CHECK_EN));
     TEST_ESP_OK(i2c_master_stop(cmd));
-    esp_err_t ret = i2c_master_cmd_begin(i2c_num, cmd, 5000 / portTICK_RATE_MS);
+    esp_err_t ret = i2c_master_cmd_begin(i2c_num, cmd, 5000 / portTICK_PERIOD_MS);
     i2c_cmd_link_delete(cmd);
     return ret;
 }
@@ -245,7 +245,7 @@ TEST_CASE("I2C driver memory leaking check", "[i2c]")
                                  I2C_SLAVE_RX_BUF_LEN,
                                  I2C_SLAVE_TX_BUF_LEN, 0);
         TEST_ASSERT(ret == ESP_OK);
-        vTaskDelay(10 / portTICK_RATE_MS);
+        vTaskDelay(10 / portTICK_PERIOD_MS);
         i2c_driver_delete(I2C_SLAVE_NUM);
         TEST_ASSERT(ret == ESP_OK);
     }
@@ -292,7 +292,7 @@ static void i2c_slave_read_test()
 
     unity_wait_for_signal("master write");
     while (1) {
-        len = i2c_slave_read_buffer( I2C_SLAVE_NUM, data_rd + size_rd, DATA_LENGTH, 10000 / portTICK_RATE_MS);
+        len = i2c_slave_read_buffer( I2C_SLAVE_NUM, data_rd + size_rd, DATA_LENGTH, 10000 / portTICK_PERIOD_MS);
         if (len == 0) {
             break;
         }
@@ -329,9 +329,9 @@ static void master_read_slave_test()
     i2c_master_read(cmd, data_rd, RW_TEST_LENGTH-1, ACK_VAL);
     i2c_master_read_byte(cmd, data_rd + RW_TEST_LENGTH-1, NACK_VAL);
     i2c_master_stop(cmd);
-    i2c_master_cmd_begin(I2C_MASTER_NUM, cmd, 5000 / portTICK_RATE_MS);
+    i2c_master_cmd_begin(I2C_MASTER_NUM, cmd, 5000 / portTICK_PERIOD_MS);
     i2c_cmd_link_delete(cmd);
-    vTaskDelay(100 / portTICK_RATE_MS);
+    vTaskDelay(100 / portTICK_PERIOD_MS);
     for (int i = 0; i < RW_TEST_LENGTH; i++) {
         printf("%d\n", data_rd[i]);
         TEST_ASSERT(data_rd[i]==i);
@@ -357,7 +357,7 @@ static void slave_write_buffer_test()
     for (int i = 0; i < DATA_LENGTH / 2; i++) {
         data_wr[i] = i;
     }
-    size_rd = i2c_slave_write_buffer(I2C_SLAVE_NUM, data_wr, RW_TEST_LENGTH, 2000 / portTICK_RATE_MS);
+    size_rd = i2c_slave_write_buffer(I2C_SLAVE_NUM, data_wr, RW_TEST_LENGTH, 2000 / portTICK_PERIOD_MS);
     disp_buf(data_wr, size_rd);
     unity_send_signal("master read");
     unity_wait_for_signal("ready to delete");
@@ -389,9 +389,9 @@ static void i2c_master_write_read_test()
     i2c_master_read(cmd, data_rd, RW_TEST_LENGTH, ACK_VAL);
     i2c_master_read_byte(cmd, data_rd + RW_TEST_LENGTH, NACK_VAL);
     i2c_master_stop(cmd);
-    i2c_master_cmd_begin(I2C_MASTER_NUM, cmd, 5000 / portTICK_RATE_MS);
+    i2c_master_cmd_begin(I2C_MASTER_NUM, cmd, 5000 / portTICK_PERIOD_MS);
     i2c_cmd_link_delete(cmd);
-    vTaskDelay(100 / portTICK_RATE_MS);
+    vTaskDelay(100 / portTICK_PERIOD_MS);
     disp_buf(data_rd, RW_TEST_LENGTH);
     for (int i = 0; i < RW_TEST_LENGTH; i++) {
         TEST_ASSERT(data_rd[i] == i/2);
@@ -401,7 +401,7 @@ static void i2c_master_write_read_test()
         data_wr[i] = i % 3;
     }
 
-    vTaskDelay(100 / portTICK_RATE_MS);
+    vTaskDelay(100 / portTICK_PERIOD_MS);
     i2c_master_write_slave(I2C_MASTER_NUM, data_wr, RW_TEST_LENGTH);
     free(data_wr);
     free(data_rd);
@@ -428,11 +428,11 @@ static void i2c_slave_read_write_test()
     for (int i = 0; i < DATA_LENGTH / 2; i++) {
         data_wr[i] = i/2;
     }
-    size_rd = i2c_slave_write_buffer(I2C_SLAVE_NUM, data_wr, RW_TEST_LENGTH, 2000 / portTICK_RATE_MS);
+    size_rd = i2c_slave_write_buffer(I2C_SLAVE_NUM, data_wr, RW_TEST_LENGTH, 2000 / portTICK_PERIOD_MS);
     disp_buf(data_wr, size_rd);
     unity_send_signal("master read and write");
     unity_wait_for_signal("slave read");
-    size_rd = i2c_slave_read_buffer( I2C_SLAVE_NUM, data_rd, RW_TEST_LENGTH, 1000 / portTICK_RATE_MS);
+    size_rd = i2c_slave_read_buffer( I2C_SLAVE_NUM, data_rd, RW_TEST_LENGTH, 1000 / portTICK_PERIOD_MS);
     printf("slave read data is:\n");
     disp_buf(data_rd, size_rd);
     for (int i = 0; i < RW_TEST_LENGTH; i++) {
@@ -487,7 +487,7 @@ static void i2c_slave_repeat_read()
     unity_wait_for_signal("master write");
 
     while (1) {
-        int len = i2c_slave_read_buffer( I2C_SLAVE_NUM, data_rd + size_rd, RW_TEST_LENGTH * 3, 10000 / portTICK_RATE_MS);
+        int len = i2c_slave_read_buffer( I2C_SLAVE_NUM, data_rd + size_rd, RW_TEST_LENGTH * 3, 10000 / portTICK_PERIOD_MS);
         if (len == 0) {
             break;
         }

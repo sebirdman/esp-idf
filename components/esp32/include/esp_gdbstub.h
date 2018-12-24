@@ -15,7 +15,7 @@
 #define GDBSTUB_H
 
 #include <xtensa/config/core.h>
-#include "freertos/xtensa_api.h"
+#include "xtensa_api.h"
 
 void esp_gdbstub_panic_handler(XtExcFrame *frame) __attribute__((noreturn));
 

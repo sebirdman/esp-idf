@@ -48,8 +48,8 @@
 #endif /* #if CONFIG_CLASSIC_BT_ENABLED */
 
 
-static xTaskHandle  xBtcTaskHandle = NULL;
-static xQueueHandle xBtcQueue = 0;
+static TaskHandle_t  xBtcTaskHandle = NULL;
+static QueueHandle_t xBtcQueue = 0;
 
 static btc_func_t profile_tab[BTC_PID_NUM] = {
     [BTC_PID_MAIN_INIT]   = {btc_main_call_handler,       NULL                    },
@@ -100,7 +100,7 @@ static void btc_task(void *arg)
     btc_msg_t msg;
 
     for (;;) {
-        if (pdTRUE == xQueueReceive(xBtcQueue, &msg, (portTickType)portMAX_DELAY)) {
+        if (pdTRUE == xQueueReceive(xBtcQueue, &msg, (TickType_t)portMAX_DELAY)) {
             BTC_TRACE_DEBUG("%s msg %u %u %u %p\n", __func__, msg.sig, msg.pid, msg.act, msg.arg);
             switch (msg.sig) {
             case BTC_SIG_API_CALL:

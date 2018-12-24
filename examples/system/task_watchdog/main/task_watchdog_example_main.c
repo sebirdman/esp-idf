@@ -8,8 +8,8 @@
 */
 #include <stdio.h>
 #include <stdlib.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
+#include "FreeRTOS.h"
+#include "task.h"
 #include "esp_task_wdt.h"
 
 #define TWDT_TIMEOUT_S          3

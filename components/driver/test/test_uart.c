@@ -24,7 +24,7 @@
 #define PACKETS_NUMBER  (10)
 
 // Wait timeout for uart driver
-#define PACKET_READ_TICS    (1000 / portTICK_RATE_MS)
+#define PACKET_READ_TICS    (1000 / portTICK_PERIOD_MS)
 
 // The table for fast CRC16 calculation 
 static const uint8_t crc_hi[] = {
@@ -147,7 +147,7 @@ TEST_CASE("test uart tx data with break","[uart]")
     uart_config(UART_BAUD_115200, false);
     printf("Uart%d send %d bytes with break\n", UART_NUM1, send_len);
     uart_write_bytes_with_break(UART_NUM1, (const char *)psend, send_len, brk_len);
-    uart_wait_tx_done(UART_NUM1, (portTickType)portMAX_DELAY);
+    uart_wait_tx_done(UART_NUM1, (TickType_t)portMAX_DELAY);
     //If the code is running here, it means the test passed, otherwise it will crash due to the interrupt wdt timeout.
     printf("Send data with break test passed\n");
     free(psend);

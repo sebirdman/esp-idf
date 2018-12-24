@@ -16,9 +16,9 @@
 #include <time.h>
 #include <string.h>
 #include <assert.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/semphr.h"
-#include "freertos/timers.h"
+#include "FreeRTOS.h"
+#include "semphr.h"
+#include "timers.h"
 #include "nvs_flash.h"
 #include "esp_event_loop.h"
 #include "tcpip_adapter.h"
@@ -32,7 +32,7 @@
 
 static const char *TAG = "espnow_example";
 
-static xQueueHandle s_example_espnow_queue;
+static QueueHandle_t s_example_espnow_queue;
 
 static uint8_t s_example_broadcast_mac[ESP_NOW_ETH_ALEN] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
 static uint16_t s_example_espnow_seq[EXAMPLE_ESPNOW_DATA_MAX] = { 0, 0 };
@@ -170,7 +170,7 @@ static void example_espnow_task(void *pvParameter)
     bool is_broadcast = false;
     int ret;
 
-    vTaskDelay(5000 / portTICK_RATE_MS);
+    vTaskDelay(5000 / portTICK_PERIOD_MS);
     ESP_LOGI(TAG, "Start sending broadcast data");
 
     /* Start sending broadcast ESPNOW data. */
@@ -205,7 +205,7 @@ static void example_espnow_task(void *pvParameter)
 
                 /* Delay a while before sending the next data. */
                 if (send_param->delay > 0) {
-                    vTaskDelay(send_param->delay/portTICK_RATE_MS);
+                    vTaskDelay(send_param->delay/portTICK_PERIOD_MS);
                 }
 
                 ESP_LOGI(TAG, "send data to "MACSTR"", MAC2STR(send_cb->mac_addr));

@@ -4,8 +4,8 @@
 
 #include <stdio.h>
 #include "soc/cpu.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
+#include "FreeRTOS.h"
+#include "task.h"
 #include "unity.h"
 #include "sdkconfig.h"
 

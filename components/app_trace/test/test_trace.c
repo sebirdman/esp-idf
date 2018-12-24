@@ -6,9 +6,9 @@
 #include "unity.h"
 #include "driver/timer.h"
 #include "soc/cpu.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/semphr.h"
-#include "freertos/task.h"
+#include "FreeRTOS.h"
+#include "semphr.h"
+#include "task.h"
 #if CONFIG_ESP32_APPTRACE_ENABLE == 1
 #include "esp_app_trace.h"
 #include "esp_app_trace_util.h"

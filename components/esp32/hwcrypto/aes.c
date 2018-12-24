@@ -32,7 +32,7 @@
 #include "soc/hwcrypto_reg.h"
 #include <sys/lock.h>
 
-#include <freertos/FreeRTOS.h>
+#include <FreeRTOS.h>
 
 #include "soc/cpu.h"
 #include <stdio.h>

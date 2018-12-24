@@ -18,7 +18,7 @@
 #include <sys/param.h>
 #include "unity.h"
 #include "soc/uart_struct.h"
-#include "freertos/FreeRTOS.h"
+#include "FreeRTOS.h"
 #include "driver/uart.h"
 #include "esp_vfs.h"
 #include "esp_vfs_dev.h"
@@ -29,7 +29,7 @@
 typedef struct {
     int fd;
     int delay_ms;
-    xSemaphoreHandle sem;
+    SemaphoreHandle_t sem;
 } test_task_param_t;
 
 static const char message[] = "Hello world!";

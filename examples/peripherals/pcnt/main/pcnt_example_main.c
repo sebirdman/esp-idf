@@ -10,10 +10,10 @@
    CONDITIONS OF ANY KIND, either express or implied.
 */
 #include <stdio.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/portmacro.h"
-#include "freertos/task.h"
-#include "freertos/queue.h"
+#include "FreeRTOS.h"
+#include "portmacro.h"
+#include "task.h"
+#include "queue.h"
 #include "driver/periph_ctrl.h"
 #include "driver/ledc.h"
 #include "driver/gpio.h"
@@ -53,7 +53,7 @@
 #define PCNT_INPUT_CTRL_IO  5  // Control GPIO HIGH=count up, LOW=count down
 #define LEDC_OUTPUT_IO      18 // Output GPIO of a sample 1 Hz pulse generator
 
-xQueueHandle pcnt_evt_queue;   // A queue to handle pulse counter events
+QueueHandle_t pcnt_evt_queue;   // A queue to handle pulse counter events
 pcnt_isr_handle_t user_isr_handle = NULL; //user's ISR service handle
 
 /* A sample structure to pass events from the PCNT

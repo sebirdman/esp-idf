@@ -19,8 +19,8 @@
 #include <string.h>
 #include "esp_log.h"
 #include "esp_heap_caps.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
+#include "FreeRTOS.h"
+#include "task.h"
 #include "driver/sdmmc_defs.h"
 #include "driver/sdmmc_types.h"
 #include "sdmmc_cmd.h"

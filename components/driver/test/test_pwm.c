@@ -18,11 +18,11 @@
 #include "driver/pcnt.h"
 #include "unity.h"
 #include "test_utils.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
+#include "FreeRTOS.h"
+#include "task.h"
 #include "soc/mcpwm_reg.h"
 #include "soc/mcpwm_struct.h"
-#include "freertos/queue.h"
+#include "queue.h"
 #include "esp_attr.h"
 #include "esp_log.h"
 #include "soc/rtc.h"
@@ -57,7 +57,7 @@
 
 static mcpwm_dev_t *MCPWM[2] = {&MCPWM0, &MCPWM1};
 
-static xQueueHandle cap_queue;
+static QueueHandle_t cap_queue;
 static volatile int cap0_times = 0;
 static volatile int cap1_times = 0;
 static volatile int cap2_times = 0;
@@ -122,7 +122,7 @@ static int16_t pcnt_count(int pulse_gpio_num, int ctrl_gpio_num, int last_time)
     TEST_ESP_OK(pcnt_counter_resume(PCNT_UNIT_0));
     TEST_ESP_OK(pcnt_get_counter_value(PCNT_UNIT_0, &test_counter));
     printf("COUNT: %d\n", test_counter);
-    vTaskDelay(last_time / portTICK_RATE_MS);
+    vTaskDelay(last_time / portTICK_PERIOD_MS);
     TEST_ESP_OK(pcnt_get_counter_value(PCNT_UNIT_0, &test_counter));
     printf("COUNT: %d\n", test_counter);
     return test_counter;
@@ -144,14 +144,14 @@ static void judge_count_value(int allow_error ,int expect_freq)
 static void timer_duty_test(mcpwm_unit_t unit, mcpwm_io_signals_t mcpwm_a, mcpwm_io_signals_t mcpwm_b, mcpwm_timer_t timer)
 {
     mcpwm_basic_config(unit, mcpwm_a, mcpwm_b, timer);
-    vTaskDelay(1000 / portTICK_RATE_MS); // stay this status for a while so that can view its waveform by logic anylyzer
+    vTaskDelay(1000 / portTICK_PERIOD_MS); // stay this status for a while so that can view its waveform by logic anylyzer
 
     TEST_ESP_OK(mcpwm_set_duty(unit, timer, MCPWM_OPR_A, (INITIAL_DUTY * 1)));
     TEST_ESP_OK(mcpwm_set_duty(unit, timer, MCPWM_OPR_B, (INITIAL_DUTY * 2)));
 
     TEST_ASSERT_EQUAL_INT(mcpwm_get_duty(unit, timer, MCPWM_OPR_A), INITIAL_DUTY * 1);
     TEST_ASSERT_EQUAL_INT(mcpwm_get_duty(unit, timer, MCPWM_OPR_B), INITIAL_DUTY * 2);
-    vTaskDelay(1000 / portTICK_RATE_MS);  // stay this status for a while so that can view its waveform by logic anylyzer
+    vTaskDelay(1000 / portTICK_PERIOD_MS);  // stay this status for a while so that can view its waveform by logic anylyzer
 
     mcpwm_set_duty(unit, timer, MCPWM_OPR_A, 55.5f);
     mcpwm_set_duty_type(unit, timer, MCPWM_OPR_A, MCPWM_DUTY_MODE_0);
@@ -159,7 +159,7 @@ static void timer_duty_test(mcpwm_unit_t unit, mcpwm_io_signals_t mcpwm_a, mcpwm
 
     mcpwm_set_duty_in_us(unit, timer, MCPWM_OPR_B, 500);
     printf("mcpwm check = %f\n", mcpwm_get_duty(unit, timer, MCPWM_OPR_B));
-    vTaskDelay(1000 / portTICK_RATE_MS);  // stay this status for a while so that can view its waveform by logic anylyzer
+    vTaskDelay(1000 / portTICK_PERIOD_MS);  // stay this status for a while so that can view its waveform by logic anylyzer
 }
 
 // test the start and stop function work or not
@@ -168,10 +168,10 @@ static void start_stop_test(mcpwm_unit_t unit, mcpwm_io_signals_t mcpwm_a, mcpwm
     mcpwm_basic_config(unit, mcpwm_a, mcpwm_b, timer);
     judge_count_value(2, 1000);
     TEST_ESP_OK(mcpwm_stop(unit, timer));
-    vTaskDelay(10 / portTICK_RATE_MS); // wait for a while, stop totally
+    vTaskDelay(10 / portTICK_PERIOD_MS); // wait for a while, stop totally
     judge_count_value(0, 0);
     TEST_ESP_OK(mcpwm_start(unit, timer));
-    vTaskDelay(10 / portTICK_RATE_MS); // wait for a while, start totally
+    vTaskDelay(10 / portTICK_PERIOD_MS); // wait for a while, start totally
     judge_count_value(2, 1000);
 }
 
@@ -185,7 +185,7 @@ static void deadtime_test(mcpwm_unit_t unit, mcpwm_io_signals_t mcpwm_a, mcpwm_i
 
     for(int i=0; i<8; i++) {
         mcpwm_deadtime_enable(unit, timer, deadtime_type[i], 1000, 1000);
-        vTaskDelay(1000 / portTICK_RATE_MS);
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
         mcpwm_deadtime_disable(unit, timer);
     }
 }
@@ -207,7 +207,7 @@ static void carrier_with_set_function_test(mcpwm_unit_t unit, mcpwm_io_signals_t
 
     // with invert
     TEST_ESP_OK(mcpwm_carrier_output_invert(unit, timer, invert_or_not));
-    vTaskDelay(2000 / portTICK_RATE_MS);
+    vTaskDelay(2000 / portTICK_PERIOD_MS);
 }
 
 static void carrier_with_configuration_test(mcpwm_unit_t unit, mcpwm_io_signals_t mcpwm_a, mcpwm_io_signals_t mcpwm_b, mcpwm_timer_t timer,
@@ -247,7 +247,7 @@ static void get_action_level(mcpwm_fault_input_level_t input_sig, mcpwm_action_o
         TEST_ASSERT(gpio_get_level(GPIO_PWMA_PCNT_INPUT) == 1);
     }else {
         int level =  gpio_get_level(GPIO_PWMA_PCNT_INPUT);
-        vTaskDelay(100 / portTICK_RATE_MS);
+        vTaskDelay(100 / portTICK_PERIOD_MS);
         TEST_ASSERT(gpio_get_level(GPIO_PWMA_PCNT_INPUT) == level);
     }
 
@@ -259,7 +259,7 @@ static void get_action_level(mcpwm_fault_input_level_t input_sig, mcpwm_action_o
         TEST_ASSERT(gpio_get_level(GPIO_PWMB_PCNT_INPUT) == 1);
     }else {
         int level =  gpio_get_level(GPIO_PWMB_PCNT_INPUT);
-        vTaskDelay(100 / portTICK_RATE_MS);
+        vTaskDelay(100 / portTICK_PERIOD_MS);
         TEST_ASSERT(gpio_get_level(GPIO_PWMB_PCNT_INPUT) == level);
     }
 }
@@ -287,9 +287,9 @@ static void cycle_fault_test(mcpwm_unit_t unit, mcpwm_io_signals_t mcpwm_a, mcpw
     gpio_set_level(FAULT_SIG_NUM, !input_sig);
     TEST_ESP_OK(mcpwm_fault_init(unit, input_sig, fault_sig));
     TEST_ESP_OK(mcpwm_fault_set_cyc_mode(unit, timer, fault_sig, action_a, action_b));
-    vTaskDelay(1000 / portTICK_RATE_MS);
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
     gpio_set_level(FAULT_SIG_NUM, input_sig); // trigger the fault event
-    vTaskDelay(1000 / portTICK_RATE_MS);
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
     get_action_level(input_sig, action_a, action_b, 1000, 5);
     TEST_ESP_OK(mcpwm_fault_deinit(unit, fault_sig));
 }
@@ -314,10 +314,10 @@ static void oneshot_fault_test(mcpwm_unit_t unit, mcpwm_io_signals_t mcpwm_a, mc
     // one shot mode, it just can be triggered once
     TEST_ESP_OK(mcpwm_fault_init(unit, input_sig, fault_sig));
     TEST_ESP_OK(mcpwm_fault_set_oneshot_mode(unit, timer, fault_sig, action_a, action_b));
-    vTaskDelay(1000 / portTICK_RATE_MS);
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
     // trigger it
     gpio_set_level(FAULT_SIG_NUM, input_sig);
-    vTaskDelay(1000 / portTICK_RATE_MS);
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
     get_action_level(input_sig, action_a, action_b, 1000, 5);
     TEST_ESP_OK(mcpwm_fault_deinit(unit, fault_sig));
 }
@@ -348,9 +348,9 @@ static void sync_test(mcpwm_unit_t unit, mcpwm_io_signals_t mcpwm_a, mcpwm_io_si
 
     mcpwm_sync_enable(unit, timer, sync_sig, 200);
     gpio_set_level(SYN_SIG_NUM, 1);
-    vTaskDelay(2000 / portTICK_RATE_MS);
+    vTaskDelay(2000 / portTICK_PERIOD_MS);
     mcpwm_sync_disable(unit, timer);
-    vTaskDelay(2000 / portTICK_RATE_MS);
+    vTaskDelay(2000 / portTICK_PERIOD_MS);
 }
 
 /**
@@ -462,7 +462,7 @@ static void capture_test(mcpwm_unit_t unit, mcpwm_io_signals_t mcpwm_a, mcpwm_io
     mcpwm_isr_register(unit, isr_handler, (void *)unit, ESP_INTR_FLAG_IRAM, NULL);
 
     while(flag != 1) {
-        vTaskDelay(10 / portTICK_RATE_MS);
+        vTaskDelay(10 / portTICK_PERIOD_MS);
     }
     if(cap_sig == MCPWM_SELECT_CAP0) {
     	TEST_ASSERT(1000 == cap0_times);
@@ -766,7 +766,7 @@ TEST_CASE("MCPWM timer0 sync test(logic analyzer)", "[mcpwm][ignore]")
 {
     sync_test(MCPWM_UNIT_0, MCPWM0A, MCPWM0B, MCPWM_TIMER_0, MCPWM_SELECT_SYNC0, MCPWM_SYNC_0);
     TEST_ESP_OK(mcpwm_stop(MCPWM_UNIT_0, MCPWM_TIMER_0)); // make sure can view the next sync signal clearly
-    vTaskDelay(1000 / portTICK_RATE_MS);
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
     TEST_ESP_OK(mcpwm_start(MCPWM_UNIT_0, MCPWM_TIMER_0));
     sync_test(MCPWM_UNIT_1, MCPWM0A, MCPWM0B, MCPWM_TIMER_0, MCPWM_SELECT_SYNC0, MCPWM_SYNC_0);
 }
@@ -777,7 +777,7 @@ TEST_CASE("MCPWM timer1 sync test(logic analyzer)", "[mcpwm][ignore]")
 {
     sync_test(MCPWM_UNIT_0, MCPWM1A, MCPWM1B, MCPWM_TIMER_1, MCPWM_SELECT_SYNC1, MCPWM_SYNC_1);
     TEST_ESP_OK(mcpwm_stop(MCPWM_UNIT_0, MCPWM_TIMER_1)); // make sure can view the next sync signal clearly
-    vTaskDelay(1000 / portTICK_RATE_MS);
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
     TEST_ESP_OK(mcpwm_start(MCPWM_UNIT_0, MCPWM_TIMER_1));
     sync_test(MCPWM_UNIT_1, MCPWM1A, MCPWM1B, MCPWM_TIMER_1, MCPWM_SELECT_SYNC1, MCPWM_SYNC_1);
 }
@@ -788,7 +788,7 @@ TEST_CASE("MCPWM timer2 sync test(logic analyzer)", "[mcpwm][ignore]")
 {
     sync_test(MCPWM_UNIT_0, MCPWM2A, MCPWM2B, MCPWM_TIMER_2, MCPWM_SELECT_SYNC2, MCPWM_SYNC_2);
     TEST_ESP_OK(mcpwm_stop(MCPWM_UNIT_0, MCPWM_TIMER_2)); // make sure can view the next sync signal clearly
-    vTaskDelay(1000 / portTICK_RATE_MS);
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
     TEST_ESP_OK(mcpwm_start(MCPWM_UNIT_0, MCPWM_TIMER_2));
     sync_test(MCPWM_UNIT_1, MCPWM2A, MCPWM2B, MCPWM_TIMER_2, MCPWM_SELECT_SYNC2, MCPWM_SYNC_2);
 }

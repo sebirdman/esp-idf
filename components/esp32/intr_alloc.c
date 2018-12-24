@@ -20,8 +20,8 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
+#include "FreeRTOS.h"
+#include "task.h"
 #include <esp_types.h>
 #include "esp_err.h"
 //#define LOG_LOCAL_LEVEL ESP_LOG_VERBOSE

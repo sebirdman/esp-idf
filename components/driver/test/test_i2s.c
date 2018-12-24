@@ -5,8 +5,8 @@
 
 #include <stdio.h>
 #include <string.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
+#include "FreeRTOS.h"
+#include "task.h"
 #include "driver/i2s.h"
 #include "unity.h"
 

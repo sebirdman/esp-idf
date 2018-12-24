@@ -2,9 +2,9 @@
 */
 #include <stdio.h>
 #include "unity.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/timers.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "timers.h"
 
 static void timer_callback(TimerHandle_t timer)
 {

@@ -14,9 +14,9 @@
 #include <esp_types.h>
 #include <string.h>
 #include <stdlib.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/semphr.h"
-#include "freertos/xtensa_api.h"
+#include "FreeRTOS.h"
+#include "semphr.h"
+#include "xtensa_api.h"
 #include "freertos/ringbuf.h"
 #include "esp_intr.h"
 #include "esp_log.h"
@@ -74,7 +74,7 @@ typedef struct {
     bool wait_done; //Mark whether wait tx done.
     rmt_channel_t channel;
     const rmt_item32_t* tx_data;
-    xSemaphoreHandle tx_sem;
+    SemaphoreHandle_t tx_sem;
 #if CONFIG_SPIRAM_USE_MALLOC
     int intr_alloc_flags;
     StaticSemaphore_t tx_sem_buffer;

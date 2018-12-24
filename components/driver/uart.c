@@ -20,10 +20,10 @@
 #include "esp_err.h"
 #include "esp_clk.h"
 #include "malloc.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/semphr.h"
-#include "freertos/xtensa_api.h"
-#include "freertos/task.h"
+#include "FreeRTOS.h"
+#include "semphr.h"
+#include "xtensa_api.h"
+#include "task.h"
 #include "freertos/ringbuf.h"
 #include "soc/dport_reg.h"
 #include "soc/uart_struct.h"
@@ -1025,9 +1025,9 @@ esp_err_t uart_wait_tx_done(uart_port_t uart_num, TickType_t ticks_to_wait)
     UART_CHECK((uart_num < UART_NUM_MAX), "uart_num error", ESP_FAIL);
     UART_CHECK((p_uart_obj[uart_num]), "uart driver error", ESP_FAIL);
     BaseType_t res;
-    portTickType ticks_end = xTaskGetTickCount() + ticks_to_wait;
+    TickType_t ticks_end = xTaskGetTickCount() + ticks_to_wait;
     //Take tx_mux
-    res = xSemaphoreTake(p_uart_obj[uart_num]->tx_mux, (portTickType)ticks_to_wait);
+    res = xSemaphoreTake(p_uart_obj[uart_num]->tx_mux, (TickType_t)ticks_to_wait);
     if(res == pdFALSE) {
         return ESP_ERR_TIMEOUT;
     }
@@ -1040,7 +1040,7 @@ esp_err_t uart_wait_tx_done(uart_port_t uart_num, TickType_t ticks_to_wait)
     }
     uart_enable_intr_mask(uart_num, UART_TX_DONE_INT_ENA_M);
     //take 2nd tx_done_sem, wait given from ISR
-    res = xSemaphoreTake(p_uart_obj[uart_num]->tx_done_sem, (portTickType)ticks_to_wait);
+    res = xSemaphoreTake(p_uart_obj[uart_num]->tx_done_sem, (TickType_t)ticks_to_wait);
     if(res == pdFALSE) {
         uart_disable_intr_mask(uart_num, UART_TX_DONE_INT_ENA_M);
         xSemaphoreGive(p_uart_obj[uart_num]->tx_mux);
@@ -1088,7 +1088,7 @@ int uart_tx_chars(uart_port_t uart_num, const char* buffer, uint32_t len)
     if(len == 0) {
         return 0;
     }
-    xSemaphoreTake(p_uart_obj[uart_num]->tx_mux, (portTickType)portMAX_DELAY);
+    xSemaphoreTake(p_uart_obj[uart_num]->tx_mux, (TickType_t)portMAX_DELAY);
     int tx_len = uart_fill_fifo(uart_num, (const char*) buffer, len);
     xSemaphoreGive(p_uart_obj[uart_num]->tx_mux);
     return tx_len;
@@ -1102,7 +1102,7 @@ static int uart_tx_all(uart_port_t uart_num, const char* src, size_t size, bool 
     size_t original_size = size;
 
     //lock for uart_tx
-    xSemaphoreTake(p_uart_obj[uart_num]->tx_mux, (portTickType)portMAX_DELAY);
+    xSemaphoreTake(p_uart_obj[uart_num]->tx_mux, (TickType_t)portMAX_DELAY);
     p_uart_obj[uart_num]->coll_det_flg = false;
     if(p_uart_obj[uart_num]->tx_buf_size > 0) {
         int max_size = xRingbufferGetMaxItemSize(p_uart_obj[uart_num]->tx_ring_buf);
@@ -1126,7 +1126,7 @@ static int uart_tx_all(uart_port_t uart_num, const char* src, size_t size, bool 
     } else {
         while(size) {
             //semaphore for tx_fifo available
-            if(pdTRUE == xSemaphoreTake(p_uart_obj[uart_num]->tx_fifo_sem, (portTickType)portMAX_DELAY)) {
+            if(pdTRUE == xSemaphoreTake(p_uart_obj[uart_num]->tx_fifo_sem, (TickType_t)portMAX_DELAY)) {
                 size_t sent = uart_fill_fifo(uart_num, (char*) src, size);
                 if(sent < size) {
                     p_uart_obj[uart_num]->tx_waiting_fifo = true;
@@ -1138,7 +1138,7 @@ static int uart_tx_all(uart_port_t uart_num, const char* src, size_t size, bool 
         }
         if(brk_en) {
             uart_set_break(uart_num, brk_len);
-            xSemaphoreTake(p_uart_obj[uart_num]->tx_brk_sem, (portTickType)portMAX_DELAY);
+            xSemaphoreTake(p_uart_obj[uart_num]->tx_brk_sem, (TickType_t)portMAX_DELAY);
         }
         xSemaphoreGive(p_uart_obj[uart_num]->tx_fifo_sem);
     }
@@ -1189,12 +1189,12 @@ int uart_read_bytes(uart_port_t uart_num, uint8_t* buf, uint32_t length, TickTyp
     size_t size;
     size_t copy_len = 0;
     int len_tmp;
-    if(xSemaphoreTake(p_uart_obj[uart_num]->rx_mux,(portTickType)ticks_to_wait) != pdTRUE) {
+    if(xSemaphoreTake(p_uart_obj[uart_num]->rx_mux,(TickType_t)ticks_to_wait) != pdTRUE) {
         return -1;
     }
     while(length) {
         if(p_uart_obj[uart_num]->rx_cur_remain == 0) {
-            data = (uint8_t*) xRingbufferReceive(p_uart_obj[uart_num]->rx_ring_buf, &size, (portTickType) ticks_to_wait);
+            data = (uint8_t*) xRingbufferReceive(p_uart_obj[uart_num]->rx_ring_buf, &size, (TickType_t) ticks_to_wait);
             if(data) {
                 p_uart_obj[uart_num]->rx_head_ptr = data;
                 p_uart_obj[uart_num]->rx_ptr = data;
@@ -1258,7 +1258,7 @@ esp_err_t uart_flush_input(uart_port_t uart_num)
     size_t size;
 
     //rx sem protect the ring buffer read related functions
-    xSemaphoreTake(p_uart->rx_mux, (portTickType)portMAX_DELAY);
+    xSemaphoreTake(p_uart->rx_mux, (TickType_t)portMAX_DELAY);
     uart_disable_rx_intr(p_uart_obj[uart_num]->uart_num);
     while(true) {
         if(p_uart->rx_head_ptr) {
@@ -1271,7 +1271,7 @@ esp_err_t uart_flush_input(uart_port_t uart_num)
             p_uart->rx_cur_remain = 0;
             p_uart->rx_head_ptr = NULL;
         }
-        data = (uint8_t*) xRingbufferReceive(p_uart->rx_ring_buf, &size, (portTickType) 0);
+        data = (uint8_t*) xRingbufferReceive(p_uart->rx_ring_buf, &size, (TickType_t) 0);
         if(data == NULL) {
             if( p_uart_obj[uart_num]->rx_buffered_len != 0 ) {
                 ESP_LOGE(UART_TAG, "rx_buffered_len error");

@@ -17,9 +17,9 @@
 
 #include <stdio.h>
 
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/queue.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "queue.h"
 #include "esp_attr.h"
 #include "soc/rtc.h"
 #include "driver/mcpwm.h"
@@ -55,7 +55,7 @@ typedef struct {
 static uint32_t hall_sensor_value = 0;
 static uint32_t hall_sensor_previous = 0;
 
-xQueueHandle cap_queue;
+QueueHandle_t cap_queue;
 
 static mcpwm_dev_t *MCPWM[2] = {&MCPWM0, &MCPWM1};
 
@@ -199,7 +199,7 @@ static void change_duty(void *arg)
             mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_B, (INITIAL_DUTY + j * 5.0));
             mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_2, MCPWM_OPR_A, (INITIAL_DUTY + j * 5.0));
             mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_2, MCPWM_OPR_B, (INITIAL_DUTY + j * 5.0));
-            vTaskDelay(500 / portTICK_RATE_MS);
+            vTaskDelay(500 / portTICK_PERIOD_MS);
         }
     }
 }

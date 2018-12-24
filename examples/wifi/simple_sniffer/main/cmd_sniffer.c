@@ -7,10 +7,10 @@
 */
 #include <string.h>
 #include "argtable3/argtable3.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/queue.h"
-#include "freertos/semphr.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "queue.h"
+#include "semphr.h"
 #include <sys/unistd.h>
 #include <sys/fcntl.h>
 #include "esp_log.h"

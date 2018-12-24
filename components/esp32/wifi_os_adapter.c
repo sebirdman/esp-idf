@@ -18,14 +18,14 @@
 #include <string.h>
 #include <assert.h>
 
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/queue.h"
-#include "freertos/semphr.h"
-#include "freertos/event_groups.h"
-#include "freertos/xtensa_api.h"
-#include "freertos/portmacro.h"
-#include "freertos/xtensa_api.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "queue.h"
+#include "semphr.h"
+#include "event_groups.h"
+#include "xtensa_api.h"
+#include "portmacro.h"
+#include "xtensa_api.h"
 #include "esp_types.h"
 #include "esp_system.h"
 #include "esp_task.h"

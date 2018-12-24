@@ -29,7 +29,7 @@
  */
 #include "port.h"
 #include "driver/uart.h"
-#include "freertos/queue.h" // for queue support
+#include "queue.h" // for queue support
 #include "soc/uart_reg.h"
 #include "driver/gpio.h"
 #include "esp_log.h"        // for esp_log

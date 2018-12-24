@@ -30,7 +30,7 @@
 #include "esp_bt_main.h"
 #include "esp_gatt_common_api.h"
 #include "esp_log.h"
-#include "freertos/FreeRTOS.h"
+#include "FreeRTOS.h"
 
 #define GATTC_TAG             "SEC_GATTC_DEMO"
 #define REMOTE_SERVICE_UUID   ESP_GATT_UUID_HEART_RATE_SVC

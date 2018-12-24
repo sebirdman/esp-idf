@@ -37,10 +37,10 @@
  */
 
 #ifndef BOOTLOADER_BUILD
-#include <freertos/FreeRTOS.h>
-#include <freertos/FreeRTOSConfig.h>
-#include <freertos/task.h>
-#include <freertos/semphr.h>
+#include <FreeRTOS.h>
+#include <FreeRTOSConfig.h>
+#include <task.h>
+#include <semphr.h>
 #endif
 
 #include "esp_attr.h"

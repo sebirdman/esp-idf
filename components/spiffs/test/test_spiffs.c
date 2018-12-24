@@ -24,10 +24,10 @@
 #include "esp_system.h"
 #include "esp_vfs.h"
 #include "esp_spiffs.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/queue.h"
-#include "freertos/semphr.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "queue.h"
+#include "semphr.h"
 #include "esp_partition.h"
 
 const char* spiffs_test_hello_str = "Hello, World!\n";

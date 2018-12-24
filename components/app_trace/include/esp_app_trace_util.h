@@ -14,7 +14,7 @@
 #ifndef ESP_APP_TRACE_UTIL_H_
 #define ESP_APP_TRACE_UTIL_H_
 
-#include "freertos/FreeRTOS.h"
+#include "FreeRTOS.h"
 #include "esp_err.h"
 
 /** Infinite waiting timeout */

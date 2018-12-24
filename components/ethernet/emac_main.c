@@ -46,12 +46,12 @@
 #include "emac_common.h"
 #include "emac_desc.h"
 
-#include "freertos/xtensa_api.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/queue.h"
-#include "freertos/semphr.h"
-#include "freertos/timers.h"
+#include "xtensa_api.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "queue.h"
+#include "semphr.h"
+#include "timers.h"
 
 #include "lwip/err.h"
 
@@ -67,8 +67,8 @@ static uint8_t *emac_dma_tx_buf[DMA_TX_BUF_NUM];
 
 static SemaphoreHandle_t emac_g_sem = NULL;
 static portMUX_TYPE g_emac_mux = portMUX_INITIALIZER_UNLOCKED;
-static xTaskHandle emac_task_hdl = NULL;
-static xQueueHandle emac_xqueue = NULL;
+static TaskHandle_t emac_task_hdl = NULL;
+static QueueHandle_t emac_xqueue = NULL;
 static uint8_t emac_sig_cnt[EMAC_SIG_MAX] = {0};
 static TimerHandle_t emac_timer = NULL;
 static SemaphoreHandle_t emac_rx_xMutex = NULL;
@@ -954,7 +954,7 @@ static esp_err_t emac_ioctl(emac_sig_t sig, emac_par_t par)
 {
     esp_err_t ret = ESP_OK;
     struct emac_post_cmd *post_cmd = (struct emac_post_cmd *)par;
-    xTaskHandle task_hdl = xTaskGetCurrentTaskHandle();
+    TaskHandle_t task_hdl = xTaskGetCurrentTaskHandle();
 
     if (emac_task_hdl != task_hdl) {
         post_cmd->post_type = EMAC_POST_SYNC;

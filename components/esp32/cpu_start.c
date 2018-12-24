@@ -34,11 +34,11 @@
 
 #include "driver/rtc_io.h"
 
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/semphr.h"
-#include "freertos/queue.h"
-#include "freertos/portmacro.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
+#include "queue.h"
+#include "portmacro.h"
 
 #include "esp_heap_caps_init.h"
 #include "sdkconfig.h"

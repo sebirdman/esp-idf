@@ -12,8 +12,8 @@
    set a router or a AP using the same SSID&PASSWORD as configuration of this example.
    start esp32 and when it connected to AP it will enter power save mode
 */
-#include "freertos/FreeRTOS.h"
-#include "freertos/event_groups.h"
+#include "FreeRTOS.h"
+#include "event_groups.h"
 #include "esp_wifi.h"
 #include "esp_log.h"
 #include "esp_event_loop.h"

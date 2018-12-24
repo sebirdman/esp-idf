@@ -20,8 +20,8 @@
 #include <stdarg.h>
 #include <unistd.h>
 #include <utime.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/semphr.h"
+#include "FreeRTOS.h"
+#include "semphr.h"
 #include "esp_err.h"
 #include <sys/types.h>
 #include <sys/reent.h>

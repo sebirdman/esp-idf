@@ -7,9 +7,9 @@
 */
 #include <stdio.h>
 #include <stdlib.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include <freertos/semphr.h>
+#include "FreeRTOS.h"
+#include "task.h"
+#include <semphr.h>
 #include "driver/timer.h"
 #include "esp_ipc.h"
 #include "unity.h"

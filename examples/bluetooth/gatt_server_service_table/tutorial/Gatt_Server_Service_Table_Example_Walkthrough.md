@@ -13,9 +13,9 @@ This example implements the *Heart Rate Profile* as defined by the [Traditional 
 Let’s start by taking a look at the included headers in the [gatts_table_creat_demo.c](../main/gatts_table_creat_demo.c) file:
 
 ```c
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/event_groups.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "event_groups.h"
 #include "esp_system.h"
 #include "esp_log.h"
 #include "nvs_flash.h"

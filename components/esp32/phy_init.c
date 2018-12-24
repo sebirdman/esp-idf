@@ -32,8 +32,8 @@
 #include "nvs_flash.h"
 #include "sdkconfig.h"
 
-#include "freertos/FreeRTOS.h"
-#include "freertos/portmacro.h"
+#include "FreeRTOS.h"
+#include "portmacro.h"
 #include "phy.h"
 #include "phy_init_data.h"
 #include "coexist_internal.h"

@@ -14,8 +14,8 @@
  */
 #include <stdio.h>
 
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
+#include "FreeRTOS.h"
+#include "task.h"
 #include "esp_heap_caps.h"
 #include "rom/ets_sys.h"
 

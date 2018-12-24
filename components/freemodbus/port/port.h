@@ -33,9 +33,9 @@
 #include "driver/uart.h"
 #include "driver/timer.h"
 #include "esp_log.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/xtensa_api.h"
-#include "freertos/portmacro.h"
+#include "FreeRTOS.h"
+#include "xtensa_api.h"
+#include "portmacro.h"
 #include "sdkconfig.h"
 
 /* ----------------------- Defines ------------------------------------------*/

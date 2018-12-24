@@ -25,7 +25,7 @@
 #include "esp_gatt_defs.h"
 #include "esp_gattc_api.h"
 #include "esp_gap_ble_api.h"
-#include "freertos/FreeRTOS.h"
+#include "FreeRTOS.h"
 
 #include "esp_eddystone_protocol.h"
 #include "esp_eddystone_api.h"

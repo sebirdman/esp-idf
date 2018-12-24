@@ -13,9 +13,9 @@
 #include <string.h>
 #include <stdlib.h>
 #include <sys/time.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/event_groups.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "event_groups.h"
 #include "esp_wifi.h"
 #include "esp_event_loop.h"
 #include "lwip/apps/sntp.h"

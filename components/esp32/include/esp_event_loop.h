@@ -20,8 +20,8 @@
 
 #include "esp_err.h"
 #include "esp_event.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/queue.h"
+#include "FreeRTOS.h"
+#include "queue.h"
 
 #ifdef __cplusplus
 extern "C" {

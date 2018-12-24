@@ -178,7 +178,7 @@ static void btc_a2dp_source_encoder_init(void);
 static tBTC_A2DP_SOURCE_CB btc_aa_src_cb;
 static int btc_a2dp_source_state = BTC_A2DP_SOURCE_STATE_OFF;
 static future_t *btc_a2dp_source_future = NULL;
-static xTaskHandle  btc_aa_src_task_hdl = NULL;
+static TaskHandle_t  btc_aa_src_task_hdl = NULL;
 static QueueHandle_t btc_aa_src_data_queue = NULL;
 static QueueHandle_t btc_aa_src_ctrl_queue = NULL;
 static QueueSetHandle_t btc_aa_src_queue_set;

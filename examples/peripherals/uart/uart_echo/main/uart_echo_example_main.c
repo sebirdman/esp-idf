@@ -7,8 +7,8 @@
    CONDITIONS OF ANY KIND, either express or implied.
 */
 #include <stdio.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
+#include "FreeRTOS.h"
+#include "task.h"
 #include "driver/uart.h"
 
 /**
@@ -50,7 +50,7 @@ static void echo_task()
 
     while (1) {
         // Read data from the UART
-        int len = uart_read_bytes(UART_NUM_1, data, BUF_SIZE, 20 / portTICK_RATE_MS);
+        int len = uart_read_bytes(UART_NUM_1, data, BUF_SIZE, 20 / portTICK_PERIOD_MS);
         // Write data back to the UART
         uart_write_bytes(UART_NUM_1, (const char *) data, len);
     }

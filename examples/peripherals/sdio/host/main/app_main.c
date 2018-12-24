@@ -11,10 +11,10 @@
 #include <stddef.h>
 #include <string.h>
 
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/semphr.h"
-#include "freertos/queue.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
+#include "queue.h"
 
 #include "soc/sdmmc_periph.h"
 #include "esp_log.h"
@@ -111,7 +111,7 @@ esp_err_t slave_reset(esp_slave_context_t *context)
         return ret;
     }
 
-    vTaskDelay(500 / portTICK_RATE_MS);
+    vTaskDelay(500 / portTICK_PERIOD_MS);
     ret = esp_slave_wait_for_ioready(context);
     ESP_LOGI(TAG, "slave io ready");
     return ret;

@@ -122,7 +122,7 @@ static void btc_a2dp_sink_data_ready(UNUSED_ATTR void *context);
 static tBTC_A2DP_SINK_CB btc_aa_snk_cb;
 static int btc_a2dp_sink_state = BTC_A2DP_SINK_STATE_OFF;
 static future_t *btc_a2dp_sink_future = NULL;
-static xTaskHandle  btc_aa_snk_task_hdl = NULL;
+static TaskHandle_t  btc_aa_snk_task_hdl = NULL;
 static QueueHandle_t btc_aa_snk_data_queue = NULL;
 static QueueHandle_t btc_aa_snk_ctrl_queue = NULL;
 static QueueSetHandle_t btc_aa_snk_queue_set;

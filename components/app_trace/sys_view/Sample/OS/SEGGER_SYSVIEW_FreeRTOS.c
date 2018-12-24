@@ -61,8 +61,8 @@ File    : SEGGER_SYSVIEW_FreeRTOS.c
 Purpose : Interface between FreeRTOS and SystemView.
 Revision: $Rev: 3734 $
 */
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
+#include "FreeRTOS.h"
+#include "task.h"
 #include "SEGGER_SYSVIEW.h"
 #include "SEGGER_SYSVIEW_FreeRTOS.h"
 #include "string.h" // Required for memset

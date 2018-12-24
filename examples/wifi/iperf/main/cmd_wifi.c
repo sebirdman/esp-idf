@@ -13,8 +13,8 @@
 #include "esp_console.h"
 #include "argtable3/argtable3.h"
 #include "cmd_decl.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/event_groups.h"
+#include "FreeRTOS.h"
+#include "event_groups.h"
 #include "esp_wifi.h"
 #include "tcpip_adapter.h"
 #include "esp_event_loop.h"
@@ -136,7 +136,7 @@ static bool wifi_cmd_sta_join(const char* ssid, const char* pass)
         reconnect = false;
         xEventGroupClearBits(wifi_event_group, CONNECTED_BIT);
         ESP_ERROR_CHECK( esp_wifi_disconnect() );
-        xEventGroupWaitBits(wifi_event_group, DISCONNECTED_BIT, 0, 1, portTICK_RATE_MS);
+        xEventGroupWaitBits(wifi_event_group, DISCONNECTED_BIT, 0, 1, portTICK_PERIOD_MS);
     }
 
     reconnect = true;
@@ -144,7 +144,7 @@ static bool wifi_cmd_sta_join(const char* ssid, const char* pass)
     ESP_ERROR_CHECK( esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config) );
     ESP_ERROR_CHECK( esp_wifi_connect() );
 
-    xEventGroupWaitBits(wifi_event_group, CONNECTED_BIT, 0, 1, 5000/portTICK_RATE_MS);
+    xEventGroupWaitBits(wifi_event_group, CONNECTED_BIT, 0, 1, 5000/portTICK_PERIOD_MS);
 
     return true;
 }

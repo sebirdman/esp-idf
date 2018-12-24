@@ -298,8 +298,8 @@
 /  SemaphoreHandle_t and etc. A header file for O/S definitions needs to be
 /  included somewhere in the scope of ff.h. */
 
-#include "freertos/FreeRTOS.h"
-#include "freertos/semphr.h"
+#include "FreeRTOS.h"
+#include "semphr.h"
 
 /* Some memory allocation functions are declared here in addition to ff.h, so that
    they can be used also by external code when LFN feature is disabled.

@@ -96,14 +96,14 @@
 
 typedef int32_t esp_err_t;
 
-typedef void * xSemaphoreHandle;
 typedef void * SemaphoreHandle_t;
-typedef void * xQueueHandle;
+typedef void * SemaphoreHandle_t;
+typedef void * QueueHandle_t;
 typedef void * QueueHandle_t;
 typedef void * TaskHandle_t;
 typedef void * esp_timer_handle_t;
 typedef uint32_t TickType_t;
-typedef uint32_t portTickType;
+typedef uint32_t TickType_t;
 
 
 typedef enum {

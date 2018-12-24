@@ -7,11 +7,11 @@
 #include "nvs_flash.h"
 #include "esp_event_loop.h"
 
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/semphr.h"
-#include "freertos/queue.h"
-#include "freertos/event_groups.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
+#include "queue.h"
+#include "event_groups.h"
 
 #include "lwip/sockets.h"
 #include "lwip/dns.h"

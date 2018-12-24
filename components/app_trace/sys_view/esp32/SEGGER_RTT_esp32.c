@@ -13,7 +13,7 @@
 // limitations under the License.
 
 #include "string.h"
-#include "freertos/FreeRTOS.h"
+#include "FreeRTOS.h"
 #include "SEGGER_RTT.h"
 #include "SEGGER_SYSVIEW.h"
 

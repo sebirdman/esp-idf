@@ -13,9 +13,9 @@
 // limitations under the License.
 #include <esp_types.h>
 #include "esp_intr.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/semphr.h"
-#include "freertos/xtensa_api.h"
+#include "FreeRTOS.h"
+#include "semphr.h"
+#include "xtensa_api.h"
 #include "soc/dport_reg.h"
 #include "driver/periph_ctrl.h"
 

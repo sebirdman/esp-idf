@@ -13,9 +13,9 @@
 
 #include "openssl/ssl.h"
 
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/event_groups.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "event_groups.h"
 
 #include "esp_log.h"
 #include "esp_wifi.h"
@@ -197,7 +197,7 @@ failed1:
 static void openssl_server_init(void)
 {
     int ret;
-    xTaskHandle openssl_handle;
+    TaskHandle_t openssl_handle;
 
     ret = xTaskCreate(openssl_example_task,
                       OPENSSL_EXAMPLE_TASK_NAME,

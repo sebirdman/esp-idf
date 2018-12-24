@@ -26,7 +26,7 @@ Short example of I2S configuration:
 ::
 
     #include "driver/i2s.h"
-    #include "freertos/queue.h"
+    #include "queue.h"
 
     static const int i2s_num = 0; // i2s port number
 
@@ -62,7 +62,7 @@ Short example of I2S configuration:
 Short example configuring I2S to use internal DAC for analog output::
 
     #include "driver/i2s.h"
-    #include "freertos/queue.h"
+    #include "queue.h"
 
     static const int i2s_num = 0; // i2s port number
 

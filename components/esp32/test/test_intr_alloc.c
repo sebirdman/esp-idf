@@ -6,11 +6,11 @@
 #include <stdio.h>
 #include "rom/ets_sys.h"
 
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/semphr.h"
-#include "freertos/queue.h"
-#include "freertos/xtensa_api.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
+#include "queue.h"
+#include "xtensa_api.h"
 #include "unity.h"
 #include "soc/uart_reg.h"
 #include "soc/dport_reg.h"
@@ -324,7 +324,7 @@ void isr_alloc_free_test(void)
     }
     TEST_ASSERT(ret == ESP_OK);
     xTaskCreatePinnedToCore(isr_free_task, "isr_free_task", 1024*2, (void *)&test_handle, 10, NULL, !xPortGetCoreID());
-    vTaskDelay(1000/portTICK_RATE_MS);
+    vTaskDelay(1000/portTICK_PERIOD_MS);
     TEST_ASSERT(test_handle == NULL);
     printf("test passed\n");
 }
