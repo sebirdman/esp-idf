@@ -175,7 +175,7 @@ typedef enum
  * \defgroup taskENTER_CRITICAL taskENTER_CRITICAL
  * \ingroup SchedulerControl
  */
-#define taskENTER_CRITICAL()		portENTER_CRITICAL()
+#define taskENTER_CRITICAL(mux)		portENTER_CRITICAL(mux)
 #define taskENTER_CRITICAL_FROM_ISR() portSET_INTERRUPT_MASK_FROM_ISR()
 
 /**
@@ -190,7 +190,7 @@ typedef enum
  * \defgroup taskEXIT_CRITICAL taskEXIT_CRITICAL
  * \ingroup SchedulerControl
  */
-#define taskEXIT_CRITICAL()			portEXIT_CRITICAL()
+#define taskEXIT_CRITICAL(mux)			portEXIT_CRITICAL(mux)
 #define taskEXIT_CRITICAL_FROM_ISR( x ) portCLEAR_INTERRUPT_MASK_FROM_ISR( x )
 /**
  * task. h
@@ -2503,7 +2503,6 @@ TaskHandle_t xTaskGetIdleTaskHandleForCPU( UBaseType_t cpuid );
 	#define xTaskGetCurrentTaskHandleForCPU(i) xTaskGetCurrentTaskHandle()
 
 #endif /* ( ( INCLUDE_xTaskGetCurrentTaskHandle == 1 ) || ( configUSE_MUTEXES == 1 ) ) */
-
 
 #ifdef __cplusplus
 }

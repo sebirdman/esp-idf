@@ -204,11 +204,7 @@ void vPortCPUInitializeMutex(portMUX_TYPE *mux);
 #error CONFIG_FREERTOS_PORTMUX_DEBUG not supported in Amazon FreeRTOS
 #endif
 
-void vTaskExitCritical();
-void vTaskEnterCritical();
-static inline void vPortConsumeSpinlockArg(int unused, ...)
-{
-}
+
 
 /** @brief Acquire a portmux spinlock with a timeout
  *
@@ -221,8 +217,11 @@ static inline void vPortConsumeSpinlockArg(int unused, ...)
 bool vPortCPUAcquireMutexTimeout(portMUX_TYPE *mux, int timeout_cycles);
 void vPortCPUReleaseMutex(portMUX_TYPE *mux);
 
-#define portENTER_CRITICAL(...)        do { vTaskEnterCritical(); vPortConsumeSpinlockArg(0, ##__VA_ARGS__); } while(0)
-#define portEXIT_CRITICAL(...)         do { vTaskExitCritical(); vPortConsumeSpinlockArg(0, ##__VA_ARGS__); } while(0)
+
+void vTaskEnterCritical( portMUX_TYPE *mux, const char *function, int line );
+void vTaskExitCritical( portMUX_TYPE *mux, const char *function, int line );
+#define portENTER_CRITICAL(mux)        vTaskEnterCritical(mux, __FUNCTION__, __LINE__)
+#define portEXIT_CRITICAL(mux)         vTaskExitCritical(mux, __FUNCTION__, __LINE__)
 
 
 #define portENTER_CRITICAL_ISR(mux)    vPortCPUAcquireMutexTimeout(mux, portMUX_NO_TIMEOUT)

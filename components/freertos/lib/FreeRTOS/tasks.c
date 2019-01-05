@@ -4143,26 +4143,37 @@ TCB_t *pxTCB;
 
 #if ( portCRITICAL_NESTING_IN_TCB == 1 )
 
-	void vTaskEnterCritical( void )
+	void vTaskEnterCritical( portMUX_TYPE *mux )
 	{
+
+		BaseType_t oldInterruptLevel=0;
+		BaseType_t schedulerRunning = xSchedulerRunning;
+		if( schedulerRunning != pdFALSE )
+		{
+			//Interrupts may already be disabled (because we're doing this recursively) but we can't get the interrupt level after
+			//vPortCPUAquireMutex, because it also may mess with interrupts. Get it here first, then later figure out if we're nesting
+			//and save for real there.
+			oldInterruptLevel=portENTER_CRITICAL_NESTED();
+		}
+#ifdef CONFIG_FREERTOS_PORTMUX_DEBUG
+		vPortCPUAcquireMutexIntsDisabled( mux, portMUX_NO_TIMEOUT, function, line );
+#else
+		vPortCPUAcquireMutexIntsDisabled( mux, portMUX_NO_TIMEOUT );
+#endif
 		portDISABLE_INTERRUPTS();
 
-		if( xSchedulerRunning != pdFALSE )
+		if( schedulerRunning != pdFALSE )
 		{
-			( pxCurrentTCB->uxCriticalNesting )++;
-
-			/* This is not the interrupt safe version of the enter critical
-			function so	assert() if it is being called from an interrupt
-			context.  Only API functions that end in "FromISR" can be used in an
-			interrupt.  Only assert if the critical nesting count is 1 to
-			protect against recursive calls if the assert function also uses a
-			critical section. */
-			if( pxCurrentTCB->uxCriticalNesting == 1 )
+			TCB_t *tcb = pxCurrentTCB[xPortGetCoreID()];
+			BaseType_t newNesting = tcb->uxCriticalNesting + 1;
+ 			tcb->uxCriticalNesting = newNesting;
+			if( newNesting == 1 )
 			{
-				portASSERT_IF_IN_ISR();
+				//This is the first time we get called. Save original interrupt level.
+				tcb->uxOldInterruptState = oldInterruptLevel;
 			}
 		}
-		else
+		else 
 		{
 			mtCOVERAGE_TEST_MARKER();
 		}
